@@ -13,6 +13,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.ui.graphics.Color
@@ -80,11 +82,14 @@ class MainActivity : ComponentActivity() {
 
 private object BrowserSessionRepositoryProvider {
     private val persistenceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val writeMutex = Mutex()
 
     fun persist(persistence: BrowserSessionPersistence, controller: BrowserSessionController) {
         persistenceScope.launch {
-            runCatching { persistence.saveFrom(controller) }
-                .onFailure { Log.e("WaeBrowserSession", "Could not persist browser session", it) }
+            writeMutex.withLock {
+                runCatching { persistence.saveFrom(controller) }
+                    .onFailure { Log.e("WaeBrowserSession", "Could not persist browser session", it) }
+            }
         }
     }
 
