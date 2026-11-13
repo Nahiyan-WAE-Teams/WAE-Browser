@@ -1,29 +1,44 @@
 # WAE Browser
 
-WAE Browser is an Android browser project built around Chromium, with local-first privacy controls, user-installed extensions, a capable download manager, and optional self-hosted synchronization.
+WAE Browser is a privacy-focused Android browser project built around Chromium, with local-first controls, user-installed extensions, a capable download manager, offline reading, and optional self-hosted synchronization.
 
 ## Product decisions
 
-- **Platform:** Android; ARM64 is the first supported ABI.
+- **Platform:** Android 10 (API 29) minimum; ARM64 first.
 - **Browser engine:** Chromium. Android System WebView is not the target engine.
 - **Distribution:** Direct APK releases and GitHub Releases.
 - **Identity:** Anonymous by default; no WAE account required.
-- **Sync:** Optional self-hosted server, end-to-end encrypted by the client.
+- **Sync:** Optional self-hosted server, with client-side encryption.
 - **Extensions:** User-installed extension packages, including local files; compatibility is staged and explicitly tested rather than assumed.
 - **Privacy:** Strong defaults with understandable user controls. Browser security invariants are not user-disableable.
 - **Telemetry:** No hidden telemetry and no mandatory cloud dependency.
 
-## Status
+## Current status
 
-This repository is being initialized. The current commit establishes product requirements, architecture, security boundaries, and the implementation roadmap. It does **not** yet contain a working browser, Chromium build, extension runtime, or release APK.
+The repository contains the product/security baseline and an initial Android application shell using Jetpack Compose. The shell is a UI foundation only: Chromium navigation, extension execution, privacy enforcement, downloads, and sync are not yet integrated. No release APK has been produced.
+
+Active implementation branch: [feat/android-foundation](https://github.com/Nahiyan-WAE-Teams/WAE-Browser/tree/feat/android-foundation).
 
 ## Documentation
 
 - [Product requirements](docs/PRODUCT_REQUIREMENTS.md)
 - [Threat model](docs/THREAT_MODEL.md)
 - [Module architecture](docs/ARCHITECTURE.md)
+- [Verified Android toolchain baseline](docs/TOOLCHAIN.md)
 - [Chromium security maintenance](docs/CHROMIUM_MAINTENANCE.md)
 - [Implementation plan](PLAN.md)
+
+## Android build baseline
+
+- Minimum SDK: 29 (Android 10)
+- Compile / target SDK: 36
+- Android Gradle Plugin: 9.5.0
+- Gradle: 9.6.0
+- Kotlin: 2.4.21
+- JDK: 17
+- Compose BOM: 2026.09.00
+
+See [docs/TOOLCHAIN.md](docs/TOOLCHAIN.md) for source references and constraints. These versions have been checked against upstream documentation but have not yet been validated by a Gradle build in this repository.
 
 ## Development principles
 
