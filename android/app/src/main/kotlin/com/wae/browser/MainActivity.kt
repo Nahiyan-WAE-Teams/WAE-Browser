@@ -8,7 +8,9 @@ import androidx.lifecycle.lifecycleScope
 import com.wae.browser.core.BrowserSessionController
 import com.wae.browser.core.BrowserSessionPersistence
 import com.wae.browser.core.DataStoreBrowserSessionRepository
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.compose.material3.MaterialTheme
@@ -68,10 +70,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun persistSession() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            runCatching { sessionPersistence.saveFrom(sessionController) }
-                .onFailure { Log.e(TAG, "Could not persist browser session", it) }
-        }
+        BrowserSessionRepositoryProvider.persist(sessionPersistence, sessionController)
     }
 
     private companion object {
@@ -80,6 +79,15 @@ class MainActivity : ComponentActivity() {
 }
 
 private object BrowserSessionRepositoryProvider {
+    private val persistenceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    fun persist(persistence: BrowserSessionPersistence, controller: BrowserSessionController) {
+        persistenceScope.launch {
+            runCatching { persistence.saveFrom(controller) }
+                .onFailure { Log.e("WaeBrowserSession", "Could not persist browser session", it) }
+        }
+    }
+
     @Volatile
     private var instance: DataStoreBrowserSessionRepository? = null
 
