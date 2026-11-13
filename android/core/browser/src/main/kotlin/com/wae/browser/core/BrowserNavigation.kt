@@ -46,7 +46,7 @@ class BrowserNavigationPolicy {
 
         return when (scheme) {
             "https", "http" -> {
-                if (uri.host.isNullOrBlank() || uri.port !in -1..65535) {
+                if (uri.host.isNullOrBlank() || (uri.port != -1 && uri.port !in 1..65535)) {
                     NavigationDecision.Block("Destination host or port is invalid")
                 } else {
                     NavigationDecision.Load(uri.normalize())
