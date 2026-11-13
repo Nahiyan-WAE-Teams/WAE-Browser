@@ -59,5 +59,7 @@ dependencies {
 
     debugImplementation("androidx.compose.ui:ui-tooling")
 
+    implementation(project(":android:engine:api"))
+
     testImplementation("junit:junit:4.13.2")
 }
