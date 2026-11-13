@@ -8,7 +8,9 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 - [x] Set Android 10 (API 29) as the minimum supported OS.
 - [ ] Select the application license after reviewing Chromium and third-party obligations.
 - [ ] Define minimum device requirements beyond OS version (RAM, storage, CPU/ABI).
-- [x] Verify current stable Android Gradle Plugin, Kotlin, Gradle, and Compose versions from primary sources; record them in docs/TOOLCHAIN.md.\n- [ ] Verify and pin the NDK and exact Chromium revision from primary sources.
+- [x] Verify current stable Android Gradle Plugin, Kotlin, Gradle, and Compose versions from primary sources; record them in docs/TOOLCHAIN.md.
+- [x] Add official Gradle 9.6.0 Wrapper scripts/JAR and pin the distribution SHA-256.
+- [ ] Verify and pin the NDK and exact Chromium revision from primary sources.
 - [ ] Validate that the selected Chromium revision supports the Android 10 (API 29) floor.
 - [ ] Establish reproducible build inputs, dependency pinning, and an SBOM strategy.
 - [ ] Define signing-key custody and release provenance.
@@ -27,8 +29,10 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 
 ## Phase 2 — Chromium integration
 
-- [ ] Pin an exact Chromium upstream revision and record its security baseline.
-- [ ] Build and package Chromium for ARM64 using a documented, reproducible process.
+- [x] Investigate official Chromium Android build requirements and distinguish a full browser APK from an embeddable engine library.
+- [ ] Resolve and pin an exact fully Stable Android Chromium upstream revision and record its security baseline.
+- [ ] Compare Chromium browser-fork and Content-layer integration paths with an ARM64 Android 10 proof of concept.
+- [ ] Build and package the selected Chromium integration for ARM64 using a documented, reproducible process.
 - [ ] Integrate browser tabs, navigation, rendering, downloads, permissions, and lifecycle.
 - [ ] Preserve Chromium sandboxing, site isolation, certificate validation, and process boundaries.
 - [ ] Add smoke, navigation, crash, and security regression tests.
