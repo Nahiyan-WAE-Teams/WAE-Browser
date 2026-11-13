@@ -15,3 +15,19 @@ target_os=android
 target_cpu=arm64
 build_target=chrome_public_apk
 status=POC_CANDIDATE_NOT_BUILT
+
+# Official release/security verification (2026-11-13).
+# Latest broadly released Chrome for Android Stable: 157.0.8103.78 (2026-11-11).
+# Exact source SHA and branch position above match the 157.0.8103.78 version bump.
+# Android release notes state Android receives the corresponding Desktop security fixes.
+# The matching Stable desktop update (2026-11-11) lists 83 security fixes:
+# five Critical and 78 High, including CVE-2026-126885, CVE-2026-126895,
+# CVE-2026-126879, CVE-2026-126846, and CVE-2026-126911.
+# Chrome 158.0.8127.36 for Android (2026-11-12) is Early Stable to a small
+# percentage of users, so it is tracked but not treated as broadly available Stable.
+last_security_review=2026-11-13
+latest_broad_android_stable=157.0.8103.78
+latest_early_stable_android=158.0.8127.36
+latest_stable_security_fixes=83
+latest_stable_critical_fixes=5
+latest_stable_high_fixes=78
