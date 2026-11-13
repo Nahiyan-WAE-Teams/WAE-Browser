@@ -116,9 +116,12 @@ class AddressBarResolver(
     }
 
     private fun looksLikeHost(value: String): Boolean {
-        if (value.any(Char::isWhitespace) || value.contains('/') || value.contains('?')) return false
-        val hostPart = value.substringBefore(':')
-        return hostPart == "localhost" || hostPart.contains('.')
+        if (value.any(Char::isWhitespace)) return false
+        return try {
+            URI("https://" + value).host?.isNotBlank() == true
+        } catch (_: Exception) {
+            false
+        }
     }
 
     private companion object {
