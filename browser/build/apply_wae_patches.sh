@@ -38,11 +38,16 @@ if (( ${#patches[@]} == 0 )); then
   exit 1
 fi
 
-# Preflight the complete series before modifying the checkout. A later
-# patch conflict must not leave an earlier subset silently applied.
+# Preflight the complete ordered series against a temporary index.
+# This also supports later patches that depend on earlier patch output.
+TEMP_INDEX="$(mktemp)"
+trap 'rm -f "$TEMP_INDEX"' EXIT
+GIT_INDEX_FILE="$TEMP_INDEX" git -C "$CHROMIUM_SRC" read-tree HEAD
+
 for patch in "${patches[@]}"; do
   echo "Checking $(basename "$patch")"
-  git -C "$CHROMIUM_SRC" apply --check "$patch"
+  GIT_INDEX_FILE="$TEMP_INDEX" git -C "$CHROMIUM_SRC" apply --cached --check "$patch"
+  GIT_INDEX_FILE="$TEMP_INDEX" git -C "$CHROMIUM_SRC" apply --cached "$patch"
 done
 
 for patch in "${patches[@]}"; do
@@ -52,4 +57,4 @@ done
 
 git -C "$CHROMIUM_SRC" diff --check
 echo "Applied ${#patches[@]} WAE patch(es) to Chromium $ACTUAL_REVISION."
-echo "Review with: git -C \"$CHROMIUM_SRC\" diff"
+printf 'Review with: git -C "%s" diff\\n' "$CHROMIUM_SRC"
