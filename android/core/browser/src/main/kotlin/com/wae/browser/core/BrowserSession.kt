@@ -244,7 +244,13 @@ class BrowserSessionController(
             "Preferred active tab must exist in the restored session"
         }
 
-        val safeRestored = restored.map { it.copy(isLoading = false, progress = 0) }
+        val safeRestored = restored.map {
+            it.copy(
+                pendingInput = it.currentUrl.orEmpty(),
+                isLoading = false,
+                progress = 0
+            )
+        }
         tabs.clear()
         tabs.addAll(safeRestored)
         activeId = preferredActiveId ?: tabs.firstOrNull()?.id
