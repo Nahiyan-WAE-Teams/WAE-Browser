@@ -70,7 +70,7 @@ gn gen out/WAEBrand --args="$(cat "$WAE_REPO/browser/build/args/wae-arm64.gn")"
 autoninja -C out/WAEBrand chrome_public_apk
 ```
 
-The script reads the expected source SHA from `browser/revisions/chromium.lock`, refuses a mismatched or dirty Chromium checkout, checks each patch before applying it, and runs `git diff --check`.
+The script reads the expected source SHA from `browser/revisions/chromium.lock`, refuses a mismatched or dirty Chromium checkout, preflights the ordered patch series against a temporary Git index (including dependencies between patches), then applies the series and runs `git diff --check`.
 
 The GN arg `chrome_public_manifest_package` is declared by Chromium's `chrome/android/chrome_public_apk_tmpl.gni` and changes the Android application package namespace. Patch `0001` changes the app name and related bookmark/search widget labels to WAE Browser. Neither change replaces Chromium launcher icons, remaining product strings, or Chrome's browser UI.
 
