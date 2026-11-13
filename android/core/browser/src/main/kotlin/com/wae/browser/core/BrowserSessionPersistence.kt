@@ -40,8 +40,8 @@ data class PersistedBrowserSession(
  * Calls should be dispatched away from the Android main thread by the owner.
  */
 interface BrowserSessionRepository {
-    fun read(): PersistedBrowserSession
-    fun write(session: PersistedBrowserSession)
+    suspend fun read(): PersistedBrowserSession
+    suspend fun write(session: PersistedBrowserSession)
 }
 
 /**
@@ -51,12 +51,12 @@ interface BrowserSessionRepository {
 class BrowserSessionPersistence(
     private val repository: BrowserSessionRepository
 ) {
-    fun restoreInto(controller: BrowserSessionController) {
+    suspend fun restoreInto(controller: BrowserSessionController) {
         val restored = repository.read()
         controller.restoreStandardTabs(restored.tabs, restored.activeTabId)
     }
 
-    fun saveFrom(controller: BrowserSessionController) {
+    suspend fun saveFrom(controller: BrowserSessionController) {
         repository.write(PersistedBrowserSession.from(controller.snapshot()))
     }
 }
