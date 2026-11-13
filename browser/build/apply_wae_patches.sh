@@ -57,4 +57,4 @@ done
 
 git -C "$CHROMIUM_SRC" diff --check
 echo "Applied ${#patches[@]} WAE patch(es) to Chromium $ACTUAL_REVISION."
-printf 'Review with: git -C "%s" diff\\n' "$CHROMIUM_SRC"
+printf 'Review with: git -C "%s" diff\n' "$CHROMIUM_SRC"
