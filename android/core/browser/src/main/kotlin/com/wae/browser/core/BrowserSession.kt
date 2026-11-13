@@ -240,6 +240,9 @@ class BrowserSessionController(
         require(restored.map(BrowserTab::id).distinct().size == restored.size) {
             "Restored tab IDs must be unique"
         }
+        require(restored.all { it.currentUrl == null || isSafeWebUrl(it.currentUrl) }) {
+            "Restored tab URLs must be valid HTTP(S) destinations"
+        }
         require(preferredActiveId == null || restored.any { it.id == preferredActiveId }) {
             "Preferred active tab must exist in the restored session"
         }
