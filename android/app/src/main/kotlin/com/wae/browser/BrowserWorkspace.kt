@@ -157,8 +157,9 @@ internal fun BrowserWorkspace(
                     BasicTextField(
                         value = addressDraft,
                         onValueChange = {
-                            addressDraft = it
-                            sessionController.updatePendingInput(activeTab.id, it)
+                            val boundedInput = it.take(8_192)
+                            addressDraft = boundedInput
+                            sessionController.updatePendingInput(activeTab.id, boundedInput)
                             session = sessionController.snapshot()
                         },
                         modifier = Modifier.weight(1f),
