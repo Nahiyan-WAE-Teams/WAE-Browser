@@ -1,0 +1,39 @@
+From 4c2d7c4e4f5f6e7a8b9c0d1e2f3a4b5c6d7e8f90 Mon Sep 17 00:00:00 2001
+From: WAE Browser <engineering@wae.browser>
+Date: Fri, 13 Nov 2026 00:00:00 +0000
+Subject: [PATCH 2/2] chrome/android: apply WAE tabbed-window system theme
+
+Keep the first Chromium UI adaptation deliberately narrow. Apply WAE's
+dark system-bar treatment and blue accent to the tabbed browser Activity
+without replacing Chromium's toolbar, omnibox, tab switcher, dialogs,
+or browser-owned UI lifecycle.
+
+The explicit system-bar colors avoid relying on Chrome's default
+brand palette for the browser window. Page-driven toolbar theming remains
+owned by Chromium and is intentionally unchanged.
+
+---
+ chrome/android/java/res/values/styles.xml | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/chrome/android/java/res/values/styles.xml b/chrome/android/java/res/values/styles.xml
+--- a/chrome/android/java/res/values/styles.xml
++++ b/chrome/android/java/res/values/styles.xml
+@@ -67,7 +67,15 @@
+     <style name="Base.Theme.Chromium.TabbedMode" parent="Theme.Chromium.WithWindowAnimation">
+         <item name="android:statusBarColor">@macro/default_bg_color</item>
+         <item name="android:windowLightStatusBar">@bool/window_light_status_bar</item>
+     </style>
+-    <style name="Theme.Chromium.TabbedMode" parent="Base.Theme.Chromium.TabbedMode"/>
++    <style name="Theme.Chromium.TabbedMode" parent="Base.Theme.Chromium.TabbedMode">
++        <item name="android:statusBarColor">#090D16</item>
++        <item name="android:navigationBarColor">#090D16</item>
++        <item name="android:windowLightStatusBar">false</item>
++        <item name="android:windowLightNavigationBar">false</item>
++        <item name="android:colorAccent">#B5C8FF</item>
++    </style>
+ 
+     <style name="Theme.Chromium.SearchActivity" parent="Theme.Chromium.WithWindowAnimation" />
+ 
+-- 
+2.47.0
