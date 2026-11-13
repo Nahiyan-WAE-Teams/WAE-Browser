@@ -21,6 +21,28 @@ data class BrowserBookmark(
     val createdAtEpochMillis: Long
 )
 
+/** Strip invisible controls that can spoof bookmark labels in the UI. */
+internal fun normalizeBookmarkTitle(rawTitle: String, fallback: String): String =
+    rawTitle
+        .filterNot { it.isISOControl() || it.code in BOOKMARK_BIDI_CONTROLS }
+        .trim()
+        .ifBlank { fallback }
+        .take(512)
+
+internal fun isSafeBookmarkTitle(value: String): Boolean =
+    value.isNotBlank() &&
+        value.length <= 512 &&
+        value.none { it.isISOControl() || it.code in BOOKMARK_BIDI_CONTROLS }
+
+internal fun isSafeBookmarkId(value: String): Boolean =
+    value.isNotBlank() && value.length <= 128 && value.none(Char::isISOControl)
+
+private val BOOKMARK_BIDI_CONTROLS = setOf(
+    0x061C, 0x200E, 0x200F,
+    0x202A, 0x202B, 0x202C, 0x202D, 0x202E,
+    0x2066, 0x2067, 0x2068, 0x2069
+)
+
 /**
  * Local-only bookmark storage. It is deliberately independent of browser
  * navigation so it can be retained when the Chromium runtime is integrated.
@@ -44,14 +66,14 @@ class DataStoreBrowserBookmarkRepository(
 
     suspend fun add(title: String, rawUrl: String): BrowserBookmark {
         val url = normalizeWebUrl(rawUrl)
-        val safeTitle = title.trim().ifBlank { URI(url).host.orEmpty() }.take(MAX_TITLE_CHARS)
+        val safeTitle = normalizeBookmarkTitle(title, URI(url).host.orEmpty())
         val bookmark = BrowserBookmark(
             id = newId(),
             title = safeTitle,
             url = url,
             createdAtEpochMillis = now()
         )
-        require(bookmark.id.isNotBlank() && bookmark.id.length <= MAX_ID_CHARS)
+        require(isSafeBookmarkId(bookmark.id))
         require(bookmark.createdAtEpochMillis >= 0)
 
         var savedBookmark = bookmark
@@ -89,8 +111,8 @@ class DataStoreBrowserBookmarkRepository(
         require(bookmarks.size <= MAX_BOOKMARKS)
         val array = JSONArray()
         bookmarks.forEach { bookmark ->
-            require(bookmark.id.isNotBlank() && bookmark.id.length <= MAX_ID_CHARS)
-            require(bookmark.title.length <= MAX_TITLE_CHARS)
+            require(isSafeBookmarkId(bookmark.id))
+            require(isSafeBookmarkTitle(bookmark.title))
             require(bookmark.createdAtEpochMillis >= 0)
             require(bookmark.url.length <= MAX_URL_CHARS)
             require(normalizeWebUrl(bookmark.url) == bookmark.url)
@@ -118,8 +140,8 @@ class DataStoreBrowserBookmarkRepository(
                 url = item.getString("url"),
                 createdAtEpochMillis = item.getLong("createdAtEpochMillis")
             )
-            require(bookmark.id.isNotBlank() && bookmark.id.length <= MAX_ID_CHARS)
-            require(bookmark.title.length <= MAX_TITLE_CHARS)
+            require(isSafeBookmarkId(bookmark.id))
+            require(isSafeBookmarkTitle(bookmark.title))
             require(bookmark.createdAtEpochMillis >= 0)
             require(normalizeWebUrl(bookmark.url) == bookmark.url)
             result += bookmark
