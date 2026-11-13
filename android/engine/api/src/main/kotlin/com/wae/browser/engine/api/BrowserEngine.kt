@@ -14,12 +14,16 @@ import android.view.View
 interface BrowserEngine : AutoCloseable {
     val info: BrowserEngineInfo
 
+    /**
+     * Creates an independent tab. Private tabs must not persist history,
+     * cookies, cache, or other private browsing state beyond their lifetime.
+     */
     fun createTab(context: Context, privateMode: Boolean = false): BrowserTab
 
     override fun close()
 }
 
-/** A single isolated top-level browsing context owned by the engine. */
+/** A single top-level browsing context owned by the engine. */
 interface BrowserTab : AutoCloseable {
     val id: String
     val view: View
@@ -39,7 +43,12 @@ interface BrowserTab : AutoCloseable {
 
 interface BrowserTabObserver {
     fun onStateChanged(state: BrowserTabState)
-    fun onEvent(event: BrowserTabEvent)
+
+    /**
+     * Requests are paired with a handler so UI/policy code, not renderer
+     * content, decides permissions and file selection.
+     */
+    fun onEvent(event: BrowserTabEvent, requestHandler: BrowserTabRequestHandler)
 }
 
 sealed interface BrowserTabEvent {
