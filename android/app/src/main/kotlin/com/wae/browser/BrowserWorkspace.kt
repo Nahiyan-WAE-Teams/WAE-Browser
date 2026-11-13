@@ -96,7 +96,22 @@ internal fun BrowserWorkspace() {
                             Text(
                                 "×",
                                 color = MaterialTheme.colorScheme.secondary,
-                                modifier = Modifier.padding(start = 8.dp),
+                                modifier = Modifier.padding(start = 8.dp).clickable {
+                                    if (tabs.size > 1) {
+                                        val index = tabs.indexOfFirst { it.id == tab.id }
+                                        tabs.remove(tab)
+                                        if (activeTabId == tab.id) {
+                                            val next = tabs[index.coerceAtMost(tabs.lastIndex)]
+                                            activeTabId = next.id
+                                            addressDraft = next.address
+                                        }
+                                    } else {
+                                        val replacement = WorkspaceTab()
+                                        tabs[0] = replacement
+                                        activeTabId = replacement.id
+                                        addressDraft = ""
+                                    }
+                                },
                                 fontSize = 16.sp
                             )
                         }
