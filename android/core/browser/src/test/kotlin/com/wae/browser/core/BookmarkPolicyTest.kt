@@ -31,4 +31,9 @@ class BookmarkPolicyTest {
         assertFalse(isSafeBookmarkId("bookmark\n123"))
         assertFalse(isSafeBookmarkId("x".repeat(129)))
     }
+
+    @Test
+    fun bookmarkTitleLengthIsBoundedAfterNormalization() {
+        assertEquals(512, normalizeBookmarkTitle("x".repeat(600), "fallback").length)
+    }
 }
