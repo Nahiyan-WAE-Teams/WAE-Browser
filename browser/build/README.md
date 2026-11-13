@@ -60,18 +60,22 @@ out/WAE/bin/chrome_public_apk install
 
 ## WAE package namespace and app-name patch
 
-After the unmodified baseline is reviewed, apply the first WAE patch to the clean pinned checkout, then generate a separate output directory:
+After the unmodified baseline is reviewed, apply the WAE patch series to a clean checkout at the exact locked revision:
 
 ```sh
 WAE_REPO=/path/to/WAE-Browser
-git -C "$HOME/wae-chromium/src" apply --check "$WAE_REPO/browser/patches/0001-wae-app-name.patch"
-git -C "$HOME/wae-chromium/src" apply "$WAE_REPO/browser/patches/0001-wae-app-name.patch"
-git -C "$HOME/wae-chromium/src" diff --check
+bash "$WAE_REPO/browser/build/apply_wae_patches.sh" "$HOME/wae-chromium/src"
+```
 
+The script reads the expected source SHA from `browser/revisions/chromium.lock`, refuses a mismatched or dirty Chromium checkout, checks each patch before applying it, and runs `git diff --check`.
+
+Then generate a separate WAE package-namespace output directory:
+
+```sh
 gn gen out/WAEBrand --args='target_os="android" target_cpu="arm64" chrome_public_manifest_package="com.wae.browser"'
 autoninja -C out/WAEBrand chrome_public_apk
 ```
 
 The GN arg `chrome_public_manifest_package` is declared by Chromium's `chrome/android/chrome_public_apk_tmpl.gni` and changes the Android application package namespace. Patch `0001` changes the manifest's `app_name` resource to WAE Browser. Neither change replaces Chromium launcher icons, remaining product strings, or Chrome's browser UI.
 
-The patch is authored against the locked source file but has not yet been validated with `git apply --check` or a Chromium build. Do not ship this package-namespace/app-name build as WAE Browser until the source overlay and runtime integration are reviewed.
+The patch and script are committed but have not yet been run against a Chromium checkout. Do not ship this package-namespace/app-name build as WAE Browser until the source overlay and runtime integration are reviewed.
