@@ -38,10 +38,8 @@ class DataStoreBrowserBookmarkRepository(
         }
         return try {
             decode(encoded)
-        } catch (error: JSONException) {
-            throw IOException("Stored bookmarks are malformed", error)
-        } catch (error: IllegalArgumentException) {
-            throw IOException("Stored bookmarks violate their schema", error)
+        } catch (error: Exception) {
+            throw IOException("Stored bookmarks are malformed or violate their schema", error)
         }
     }
 
@@ -56,14 +54,18 @@ class DataStoreBrowserBookmarkRepository(
         )
         require(bookmark.id.isNotBlank() && bookmark.id.length <= MAX_ID_CHARS)
 
+        var savedBookmark = bookmark
         dataStore.edit { preferences ->
             val current = decode(preferences[BOOKMARKS_JSON].orEmpty())
             val existingIndex = current.indexOfFirst { it.url == url }
             val updated = if (existingIndex >= 0) {
-                current.toMutableList().also { it[existingIndex] = current[existingIndex].copy(title = safeTitle) }
+                current.toMutableList().also {
+                    savedBookmark = current[existingIndex].copy(title = safeTitle)
+                    it[existingIndex] = savedBookmark
+                }
             } else {
                 require(current.size < MAX_BOOKMARKS) { "Bookmark limit reached" }
-                (current + bookmark)
+                current + bookmark
             }
             val encoded = encode(updated)
             if (encoded.length > MAX_JSON_CHARS) {
@@ -71,7 +73,7 @@ class DataStoreBrowserBookmarkRepository(
             }
             preferences[BOOKMARKS_JSON] = encoded
         }
-        return bookmark
+        return savedBookmark
     }
 
     suspend fun remove(id: String) {
