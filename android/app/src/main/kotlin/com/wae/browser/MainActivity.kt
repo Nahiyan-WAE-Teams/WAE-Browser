@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 class MainActivity : ComponentActivity() {
     private lateinit var sessionController: BrowserSessionController
     private lateinit var sessionPersistence: BrowserSessionPersistence
+    private var sessionReady = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +36,7 @@ class MainActivity : ComponentActivity() {
             if (sessionController.snapshot().tabs.isEmpty()) {
                 sessionController.createTab()
             }
+            sessionReady = true
 
             setContent {
                 MaterialTheme(
@@ -59,7 +61,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onStop() {
-        if (::sessionController.isInitialized && ::sessionPersistence.isInitialized) {
+        if (sessionReady && ::sessionController.isInitialized && ::sessionPersistence.isInitialized) {
             persistSession()
         }
         super.onStop()
