@@ -1,6 +1,6 @@
 # WAE Browser — Module Architecture
 
-**Status:** Proposed architecture; no application modules have been implemented yet.  
+**Status:** Android app shell and initial engine API contract module exist; concrete Chromium adapter is not implemented.  
 **Minimum Android version:** Android 10 (API 29).  
 **Initial ABI:** ARM64.
 
@@ -75,12 +75,13 @@ WAE-Browser/
 | core/design-system | UI tokens and reusable components | Browser state |
 | feature/browser | Tabs and browsing UI state | Direct Chromium internals |
 | feature/extensions | User-facing extension management | Unrestricted engine privileges |
-| engine/api | Browser engine contracts | Engine-specific implementation |
+| engine/api | Browser engine contracts and lifecycle boundary | Engine-specific implementation |
+| engine/chromium | Chromium adapter and native integration | Product UI and policy decisions |
 | engine/chromium | Chromium integration and lifecycle | Product UI |
 
 ## 4. Engine boundary
 
-Define a small engine API for:
+The initial `:android:engine:api` module defines the application-facing boundary. Extend it only when a real Chromium integration proves the need. The contract currently covers tab creation/lifecycle, navigation, state observation, download requests, site permission requests, file chooser requests, and renderer crashes. Define and review the complete engine API for:
 - Create/destroy tab and renderer lifecycle.
 - Navigate, stop, reload, back, and forward.
 - Observe navigation, loading, title, security state, and renderer failure.
@@ -88,7 +89,7 @@ Define a small engine API for:
 - Request site permissions through a policy broker.
 - Expose only the extension hooks that the pinned Chromium integration actually supports.
 
-Do not assume Android WebView APIs are equivalent to Chromium's full browser embedding surface. The integration strategy must be validated against the chosen Chromium revision before committing to implementation.
+Do not assume Android WebView APIs are equivalent to Chromium's full browser embedding surface. The integration strategy must be validated against the chosen Chromium revision before committing to implementation. The current API module is a contract only; no fake or WebView-backed implementation is permitted.
 
 ## 5. Android compatibility
 
