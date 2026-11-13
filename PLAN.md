@@ -38,10 +38,12 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 - [x] Investigate official Chromium Android build requirements and distinguish a full browser APK from an embeddable engine library.
 - [x] Resolve and pin an exact fully Stable Android Chromium upstream revision and record its security baseline.
 - [x] Verify the pinned revision's API 29 floor, Android SDK, Build Tools, NDK, and ARM64 build target.
-- [x] Record a provisional decision to adapt Chromium's Android browser application layer rather than build a new Content embedder (ADR-0001).
+- [x] Select Chromium's Android browser application as the runtime host rather than building a new Content embedder (ADR-0001); record that the standalone Compose Activity is a prototype, not an embeddable engine host.
+- [x] Add a separate ARM64 GN args profile for the WAE package namespace (`com.wae.browser`) using Chromium's public manifest-package argument.
 - [ ] Build the pinned Chromium ARM64 baseline and validate the browser-fork integration seam with an Android 10 proof of concept.
-- [ ] Package the selected Chromium integration for ARM64 using a documented, reproducible process.
-- [ ] Integrate browser tabs, navigation, rendering, downloads, permissions, and lifecycle.
+- [ ] Build and review the unmodified ARM64 Chromium baseline and the separate WAE package-namespace variant.
+- [ ] Implement WAE branding and product browser controls inside Chromium's Android browser application using a small, reviewable patch series.
+- [ ] Integrate WAE tab/session UI with Chromium's native tab models, profiles, navigation, rendering, downloads, permissions, and lifecycle.
 - [ ] Preserve Chromium sandboxing, site isolation, certificate validation, and process boundaries.
 - [ ] Add smoke, navigation, crash, and security regression tests.
 
