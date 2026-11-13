@@ -9,6 +9,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.lifecycleScope
 import com.wae.browser.core.BrowserSessionController
+import com.wae.browser.core.DataStoreBrowserBookmarkRepository
 import com.wae.browser.core.BrowserSessionPersistence
 import com.wae.browser.core.DataStoreBrowserSessionRepository
 import kotlinx.coroutines.CoroutineScope
@@ -31,6 +32,7 @@ class MainActivity : ComponentActivity() {
         sessionPersistence = BrowserSessionPersistence(
             BrowserSessionRepositoryProvider.get(applicationContext)
         )
+        val bookmarkRepository = BrowserBookmarkRepositoryProvider.get(applicationContext)
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
@@ -57,6 +59,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     BrowserWorkspace(
                         sessionController = sessionController,
+                        bookmarkRepository = bookmarkRepository,
                         onSessionChanged = ::persistSession
                     )
                 }
@@ -99,6 +102,19 @@ private object BrowserSessionRepositoryProvider {
     fun get(context: android.content.Context): DataStoreBrowserSessionRepository =
         instance ?: synchronized(this) {
             instance ?: DataStoreBrowserSessionRepository.create(context).also {
+                instance = it
+            }
+        }
+}
+
+
+private object BrowserBookmarkRepositoryProvider {
+    @Volatile
+    private var instance: DataStoreBrowserBookmarkRepository? = null
+
+    fun get(context: android.content.Context): DataStoreBrowserBookmarkRepository =
+        instance ?: synchronized(this) {
+            instance ?: DataStoreBrowserBookmarkRepository.create(context).also {
                 instance = it
             }
         }
