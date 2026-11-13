@@ -31,6 +31,10 @@ sealed interface NavigationDecision {
  * renderer security checks.
  */
 class BrowserNavigationPolicy {
+    private companion object {
+        const val MAX_NAVIGATION_URL_CHARS = 8_192
+    }
+
     fun evaluate(request: NavigationRequest): NavigationDecision {
         val uri = request.uri
         val scheme = uri.scheme?.lowercase()
@@ -38,6 +42,10 @@ class BrowserNavigationPolicy {
 
         if (!request.isMainFrame) {
             return NavigationDecision.Load(uri)
+        }
+
+        if (uri.toASCIIString().length > MAX_NAVIGATION_URL_CHARS) {
+            return NavigationDecision.Block("Destination exceeds the maximum URL length")
         }
 
         if (uri.rawUserInfo != null) {
