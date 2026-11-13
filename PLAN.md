@@ -30,7 +30,8 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 - [ ] Complete navigation controls and settings.
 - [ ] Establish design tokens, typography, accessibility, responsive layouts, and restrained motion.
 - [ ] Respect system animation settings and provide an in-app motion preference.
-- [x] Author JVM unit tests for address resolution, navigation policy, safe HTTP(S)-only session commits, URL bounds, and private-safe session projection (not executed; CI/build remain deferred).\n- [ ] Add UI state and navigation tests, including API 29 coverage.
+- [x] Author JVM unit tests for address resolution, navigation policy, safe HTTP(S)-only session commits, URL bounds, and private-safe session projection (not executed; CI/build remain deferred).
+- [ ] Add UI state and navigation tests, including API 29 coverage.
 
 **Exit:** installable shell with no claim of production browsing until the engine is integrated.
 
