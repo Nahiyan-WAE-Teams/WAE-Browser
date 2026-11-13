@@ -60,6 +60,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
 
     implementation(project(":android:engine:api"))
+    implementation(project(":android:core:browser"))
 
     testImplementation("junit:junit:4.13.2")
 }
