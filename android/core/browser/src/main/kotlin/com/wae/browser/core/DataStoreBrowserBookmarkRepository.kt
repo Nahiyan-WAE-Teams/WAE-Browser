@@ -131,6 +131,9 @@ class DataStoreBrowserBookmarkRepository(
     }
 
     private fun decode(encoded: String): List<BrowserBookmark> {
+        if (encoded.length > MAX_JSON_CHARS) {
+            throw IOException("Stored bookmarks exceed the size limit")
+        }
         if (encoded.isBlank()) return emptyList()
         val array = JSONArray(encoded)
         require(array.length() <= MAX_BOOKMARKS)
@@ -170,8 +173,6 @@ class DataStoreBrowserBookmarkRepository(
     companion object {
         private const val FILE_NAME = "wae_browser_bookmarks.preferences_pb"
         private const val MAX_BOOKMARKS = 500
-        private const val MAX_ID_CHARS = 128
-        private const val MAX_TITLE_CHARS = 512
         private const val MAX_URL_CHARS = 8_192
         private const val MAX_JSON_CHARS = 2 * 1_024 * 1_024
         private val BOOKMARKS_JSON = stringPreferencesKey("bookmarks_json")
