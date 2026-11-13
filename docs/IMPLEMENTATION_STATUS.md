@@ -9,12 +9,12 @@ This document distinguishes committed source work from functionality that is not
 
 - Android application module targeting API 36 with a minimum API of 29.
 - Compose-based dark browser workspace.
-- Compose tab strip is connected to the engine-independent browser session controller: create, select, close, and reset tabs; standard and private tabs can be created separately.
+- Compose prototype tab strip is connected to the engine-independent session controller: create, select, close, and reset tabs. Standard/private are currently domain labels only; actual Chromium regular/OTR profile isolation is not implemented.
 - Address drafts are kept per tab; entering text does not initiate network navigation.
 - Application-facing browser engine contracts for standard/private profile lifecycle, tab lifecycle, navigation commands and interception, state observation, download requests, site permission requests, file chooser requests, and renderer crashes.
 - Chromium POC source revision, baseline ARM64 GN args, WAE package-namespace GN args, and a pinned-source integration map.
 - Engine-independent browser session controller with standard/private tab modes and standard-tab-only persistence projection.
-- Durable session repository contract plus a concrete AndroidX DataStore 1.3.0 adapter. The Activity restores on startup and saves tab changes/onStop on an IO dispatcher; private tabs, unsent address drafts, and transient loading/security state are excluded. A single process-wide DataStore instance is reused.
+- Durable session repository contract plus a concrete AndroidX DataStore 1.3.0 adapter. The Activity restores on startup and saves tab changes/onStop on an IO dispatcher; private-mode domain tabs, unsent address drafts, and transient loading/security state are excluded. This does not yet establish Chromium OTR profile isolation. A single process-wide DataStore instance is reused.
 - Address-bar resolver for HTTP(S) destinations and configurable search providers.
 - Central top-level navigation policy and coordinator; unsupported schemes are rejected and external mail/tel actions require a direct user gesture.
 
