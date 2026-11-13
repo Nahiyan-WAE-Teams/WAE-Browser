@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
 import org.json.JSONArray
 import org.json.JSONObject
@@ -59,6 +60,8 @@ class DataStoreBrowserBookmarkRepository(
         }
         return try {
             decode(encoded)
+        } catch (error: CancellationException) {
+            throw error
         } catch (error: Exception) {
             throw IOException("Stored bookmarks are malformed or violate their schema", error)
         }
@@ -100,7 +103,7 @@ class DataStoreBrowserBookmarkRepository(
     }
 
     suspend fun remove(id: String) {
-        require(id.isNotBlank() && id.length <= MAX_ID_CHARS)
+        require(isSafeBookmarkId(id))
         dataStore.edit { preferences ->
             val remaining = decode(preferences[BOOKMARKS_JSON].orEmpty()).filterNot { it.id == id }
             preferences[BOOKMARKS_JSON] = encode(remaining)
