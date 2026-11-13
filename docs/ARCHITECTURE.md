@@ -34,10 +34,10 @@ WAE-Browser/
 │   │   ├── settings/            # Settings and about
 │   │   └── offline/             # Saved pages and reader mode
 │   └── engine/
-│       ├── api/                 # Engine abstraction and contracts
-│       └── chromium/            # Chromium integration adapter
+│       └── api/                 # Prototype engine contract only
 ├── browser/
 │   ├── patches/                 # Reviewed Chromium patches only
+│   ├── integration/             # Pinned source integration map
 │   ├── build/                   # Chromium build configuration
 │   └── revisions/               # Exact upstream revision and patch metadata
 ├── modules/
@@ -77,7 +77,7 @@ WAE-Browser/
 | feature/browser | Tabs and browsing UI state | Direct Chromium internals |
 | feature/extensions | User-facing extension management | Unrestricted engine privileges |
 | engine/api | Browser engine contracts and lifecycle boundary | Engine-specific implementation |
-| engine/chromium | Chromium adapter and native integration | Product UI and policy decisions |
+| engine/api | Prototype engine contract only; not a Chromium embedding SDK | Claiming to host the full browser APK |
 
 ## 4. Chromium runtime boundary
 
@@ -135,7 +135,7 @@ All extension API calls must be mediated by a permission-aware bridge. The runti
 
 ## 9. Dependency direction
 
-UI features depend on domain contracts, not Chromium implementation classes. Chromium integration depends on engine contracts and security policy interfaces. Sync depends on domain records and cryptographic interfaces, not UI. No feature module should reach around the permission broker.
+The current Compose prototype depends on engine-independent domain state. The selected Chromium browser-fork runtime is implemented inside the pinned Chromium Android application, not as a Gradle adapter module wrapping the APK. WAE product UI and policy hooks must integrate at browser-owned Chromium seams. Sync depends on domain records and cryptographic interfaces, not UI. No feature module should reach around the permission broker.
 
 ## 10. Build and verification strategy
 
