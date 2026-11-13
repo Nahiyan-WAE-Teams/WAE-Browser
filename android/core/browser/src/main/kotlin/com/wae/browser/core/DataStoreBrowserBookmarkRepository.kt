@@ -134,7 +134,7 @@ class DataStoreBrowserBookmarkRepository(
         require(!uri.host.isNullOrBlank() && uri.rawUserInfo == null) {
             "Bookmark URL must have a host and cannot contain embedded credentials"
         }
-        require(uri.port in -1..65535) { "Bookmark URL has an invalid port" }
+        require((uri.port == -1 || uri.port in 1..65535)) { "Bookmark URL has an invalid port" }
         return uri.toASCIIString()
     }
 
