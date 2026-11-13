@@ -13,8 +13,8 @@ brand palette for the browser window. Page-driven toolbar theming remains
 owned by Chromium and is intentionally unchanged.
 
 ---
- chrome/android/java/res/values/styles.xml | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ chrome/android/java/res/values/styles.xml | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/chrome/android/java/res/values/styles.xml b/chrome/android/java/res/values/styles.xml
 --- a/chrome/android/java/res/values/styles.xml
