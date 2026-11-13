@@ -192,4 +192,59 @@ class BrowserSessionPolicyTest {
         assertEquals("https://example.com", persisted.tabs.single().pendingInput)
     }
 
+    @Test
+    fun navigationPolicyRequiresGestureForExternalActions() {
+        val policy = BrowserNavigationPolicy()
+        val mail = java.net.URI("mailto:help@example.com")
+        val tel = java.net.URI("tel:+15551234567")
+
+        assertTrue(
+            policy.evaluate(
+                NavigationRequest(mail, NavigationSource.LINK, isMainFrame = true)
+            ) is NavigationDecision.Block
+        )
+        assertTrue(
+            policy.evaluate(
+                NavigationRequest(mail, NavigationSource.SCRIPT, isMainFrame = true, hasUserGesture = true)
+            ) is NavigationDecision.Block
+        )
+        assertTrue(
+            policy.evaluate(
+                NavigationRequest(mail, NavigationSource.LINK, isMainFrame = true, hasUserGesture = true)
+            ) is NavigationDecision.OpenExternal
+        )
+        assertTrue(
+            policy.evaluate(
+                NavigationRequest(tel, NavigationSource.ADDRESS_BAR, isMainFrame = true, hasUserGesture = true)
+            ) is NavigationDecision.OpenExternal
+        )
+    }
+
+    @Test
+    fun navigationPolicyRejectsUnsafeHttpDestinations() {
+        val policy = BrowserNavigationPolicy()
+        val unsafe = listOf(
+            java.net.URI("https://user:pass@example.com"),
+            java.net.URI("https://example.com:0"),
+            java.net.URI("https://example.com:65536")
+        )
+
+        unsafe.forEach { uri ->
+            assertTrue(
+                policy.evaluate(
+                    NavigationRequest(uri, NavigationSource.LINK, isMainFrame = true)
+                ) is NavigationDecision.Block
+            )
+        }
+        assertTrue(
+            policy.evaluate(
+                NavigationRequest(
+                    java.net.URI("https://example.com:443/path"),
+                    NavigationSource.LINK,
+                    isMainFrame = true
+                )
+            ) is NavigationDecision.Load
+        )
+    }
+
 }
