@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wae.browser.core.BrowserSessionController
+import com.wae.browser.core.BrowsingMode
 
 @Composable
 internal fun BrowserWorkspace() {
@@ -112,6 +113,12 @@ internal fun BrowserWorkspace() {
                     addressDraft = tab.pendingInput
                     selectedSection = "Home"
                 }) { Text("+") }
+                OutlinedButton(onClick = {
+                    val tab = sessionController.createTab(BrowsingMode.PRIVATE)
+                    session = sessionController.snapshot()
+                    addressDraft = tab.pendingInput
+                    selectedSection = "Home"
+                }) { Text("Private") }
             }
 
             Surface(
@@ -187,6 +194,16 @@ internal fun BrowserWorkspace() {
                             Text("CURRENT TAB", fontSize = 10.sp, letterSpacing = 1.5.sp,
                                 color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
                             Text(activeTab.title, fontWeight = FontWeight.Medium)
+                            Text(
+                                if (activeTab.mode == BrowsingMode.PRIVATE) {
+                                    "PRIVATE SESSION · EPHEMERAL MODEL"
+                                } else {
+                                    "STANDARD SESSION"
+                                },
+                                fontSize = 10.sp,
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontWeight = FontWeight.Bold
+                            )
                             Text("Navigation engine pending", fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.secondary)
                         }
