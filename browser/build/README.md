@@ -1,6 +1,6 @@
 # Chromium POC build
 
-This guide builds the exact source revision in `../revisions/chromium.lock`. The first build is an unmodified Chromium baseline. A second configuration uses WAE's package namespace, but does not yet apply WAE app-label, icon, or browser-UI patches.
+This guide builds the exact source revision in `../revisions/chromium.lock`. The first build is an unmodified Chromium baseline. A second configuration applies WAE's package namespace and initial app-name patch; launcher icons and browser-UI patches remain outstanding.
 
 ## Host requirements
 
