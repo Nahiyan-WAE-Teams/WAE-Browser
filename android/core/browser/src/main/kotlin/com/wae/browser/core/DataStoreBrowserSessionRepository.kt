@@ -15,6 +15,16 @@ import java.io.IOException
 import java.net.URI
 
 /**
+ * A stored session exists but cannot safely be interpreted or restored.
+ * Transient storage failures remain ordinary IOExceptions and must not
+ * trigger a destructive-reset flow.
+ */
+class StoredSessionFormatException(
+    message: String,
+    cause: Throwable? = null
+) : IOException(message, cause)
+
+/**
  * Android-backed session storage.
  *
  * Only the standard-tab projection is accepted by this repository. Address-bar
@@ -27,15 +37,15 @@ class DataStoreBrowserSessionRepository(
     override suspend fun read(): PersistedBrowserSession {
         val encoded = dataStore.data.first()[SESSION_JSON] ?: return EMPTY_SESSION
         if (encoded.length > MAX_JSON_CHARS) {
-            throw IOException("Stored browser session exceeds the size limit")
+            throw StoredSessionFormatException("Stored browser session exceeds the size limit")
         }
 
         return try {
             decode(encoded)
         } catch (error: JSONException) {
-            throw IOException("Stored browser session is malformed", error)
+            throw StoredSessionFormatException("Stored browser session is malformed", error)
         } catch (error: IllegalArgumentException) {
-            throw IOException("Stored browser session violates its schema", error)
+            throw StoredSessionFormatException("Stored browser session violates its schema", error)
         }
     }
 

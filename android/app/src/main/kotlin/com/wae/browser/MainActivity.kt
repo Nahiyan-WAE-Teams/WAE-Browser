@@ -19,6 +19,7 @@ import com.wae.browser.core.BrowserSessionController
 import com.wae.browser.core.DataStoreBrowserBookmarkRepository
 import com.wae.browser.core.BrowserSessionPersistence
 import com.wae.browser.core.DataStoreBrowserSessionRepository
+import com.wae.browser.core.StoredSessionFormatException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,14 +43,22 @@ class MainActivity : ComponentActivity() {
         val bookmarkRepository = BrowserBookmarkRepositoryProvider.get(applicationContext)
 
         lifecycleScope.launch {
+            var resetRequired = false
+            var restoreError: String? = null
             val restored = withContext(Dispatchers.IO) {
                 try {
                     sessionPersistence.restoreInto(sessionController)
                     true
                 } catch (error: CancellationException) {
                     throw error
+                } catch (error: StoredSessionFormatException) {
+                    resetRequired = true
+                    restoreError = error.message
+                    Log.e(TAG, "Stored browser session is malformed or unsupported", error)
+                    false
                 } catch (error: Exception) {
-                    Log.e(TAG, "Could not restore browser session; preserving stored data", error)
+                    restoreError = "Session storage is temporarily unavailable. Retry without resetting."
+                    Log.e(TAG, "Could not read browser session; preserving stored data", error)
                     false
                 }
             }
@@ -63,6 +72,8 @@ class MainActivity : ComponentActivity() {
 
             setContent {
                 var recoveryComplete by remember { mutableStateOf(restored) }
+                var recoveryRequiresReset by remember { mutableStateOf(resetRequired) }
+                var recoveryError by remember { mutableStateOf(restoreError) }
                 var recoveryBusy by remember { mutableStateOf(false) }
                 MaterialTheme(
                     colorScheme = darkColorScheme(
@@ -79,13 +90,31 @@ class MainActivity : ComponentActivity() {
                     if (!recoveryComplete) {
                         AlertDialog(
                             onDismissRequest = {},
-                            title = { Text("Saved session could not be opened") },
-                            text = {
+                            title = {
                                 Text(
-                                    "The saved browser session is unreadable or uses an unsupported format. " +
-                                        "Its stored data has been preserved. Resetting will permanently " +
-                                        "discard that saved session and start with a new tab."
+                                    if (recoveryRequiresReset) {
+                                        "Saved session needs recovery"
+                                    } else {
+                                        "Session storage is unavailable"
+                                    }
                                 )
+                            },
+                            text = {
+                                androidx.compose.foundation.layout.Column {
+                                    Text(
+                                        if (recoveryRequiresReset) {
+                                            "The saved browser session is malformed or uses an unsupported format. " +
+                                                "Its stored data has been preserved. Resetting permanently discards " +
+                                                "that saved session and starts with a new tab."
+                                        } else {
+                                            "The saved session could not be read. This may be a temporary storage " +
+                                                "problem; retry before considering any data reset."
+                                        }
+                                    )
+                                    if (recoveryError != null) {
+                                        Text(recoveryError!!)
+                                    }
+                                }
                             },
                             confirmButton = {
                                 Button(
@@ -93,25 +122,54 @@ class MainActivity : ComponentActivity() {
                                     onClick = {
                                         if (recoveryBusy) return@Button
                                         recoveryBusy = true
+                                        recoveryError = null
                                         lifecycleScope.launch {
                                             try {
-                                                withContext(Dispatchers.IO) {
-                                                    sessionRepository.clear()
+                                                if (recoveryRequiresReset) {
+                                                    withContext(Dispatchers.IO) {
+                                                        BrowserSessionRepositoryProvider.clear(sessionRepository)
+                                                    }
+                                                    sessionController.createTab()
+                                                } else {
+                                                    withContext(Dispatchers.IO) {
+                                                        sessionPersistence.restoreInto(sessionController)
+                                                    }
+                                                    if (sessionController.snapshot().tabs.isEmpty()) {
+                                                        sessionController.createTab()
+                                                    }
                                                 }
-                                                sessionController.createTab()
                                                 sessionPersistenceAllowed = true
                                                 sessionReady = true
                                                 recoveryComplete = true
                                             } catch (error: CancellationException) {
                                                 throw error
+                                            } catch (error: StoredSessionFormatException) {
+                                                recoveryRequiresReset = true
+                                                recoveryError = "The saved session is malformed or unsupported. " +
+                                                    "You can reset it explicitly, or exit without changing it."
+                                                Log.e(TAG, "Session retry found invalid stored data", error)
                                             } catch (error: Exception) {
+                                                recoveryError = if (recoveryRequiresReset) {
+                                                    "Reset failed. The saved data was not intentionally replaced. " +
+                                                        "Retry the reset or exit without resetting."
+                                                } else {
+                                                    "Storage is still unavailable. No saved data was reset; retry later."
+                                                }
+                                                Log.e(TAG, "Session recovery action failed", error)
+                                            } finally {
                                                 recoveryBusy = false
-                                                Log.e(TAG, "Could not reset the unreadable browser session", error)
                                             }
                                         }
                                     }
                                 ) {
-                                    Text(if (recoveryBusy) "Resetting…" else "Reset saved session")
+                                    Text(
+                                        when {
+                                            recoveryBusy && recoveryRequiresReset -> "Resetting…"
+                                            recoveryBusy -> "Retrying…"
+                                            recoveryRequiresReset -> "Reset saved session"
+                                            else -> "Retry"
+                                        }
+                                    )
                                 }
                             },
                             dismissButton = {
@@ -119,7 +177,7 @@ class MainActivity : ComponentActivity() {
                                     enabled = !recoveryBusy,
                                     onClick = { finish() }
                                 ) {
-                                    Text("Exit without resetting")
+                                    Text("Exit without changing saved data")
                                 }
                             }
                         )
@@ -172,6 +230,12 @@ private object BrowserSessionRepositoryProvider {
         }
     }
 
+    suspend fun clear(repository: DataStoreBrowserSessionRepository) {
+        writeMutex.withLock {
+            repository.clear()
+        }
+    }
+
     @Volatile
     private var instance: DataStoreBrowserSessionRepository? = null
 
@@ -182,7 +246,6 @@ private object BrowserSessionRepositoryProvider {
             }
         }
 }
-
 
 private object BrowserBookmarkRepositoryProvider {
     @Volatile
