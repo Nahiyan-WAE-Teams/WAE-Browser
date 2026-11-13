@@ -1,9 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+MODE="apply"
+case "${1:-}" in
+  --check)
+    MODE="check"
+    shift
+    ;;
+  --apply)
+    shift
+    ;;
+esac
+
 CHROMIUM_SRC="${1:-${CHROMIUM_SRC:-}}"
 if [[ -z "$CHROMIUM_SRC" ]]; then
-  echo "Usage: bash browser/build/apply_wae_patches.sh /path/to/chromium/src" >&2
+  echo "Usage: bash browser/build/apply_wae_patches.sh [--check|--apply] /path/to/chromium/src" >&2
+  echo "  --check  Validate the complete ordered patch series without changing Chromium." >&2
+  echo "  --apply  Apply the patch series after a successful preflight (default)." >&2
   exit 2
 fi
 
@@ -49,6 +62,12 @@ for patch in "${patches[@]}"; do
   GIT_INDEX_FILE="$TEMP_INDEX" git -C "$CHROMIUM_SRC" apply --cached --check "$patch"
   GIT_INDEX_FILE="$TEMP_INDEX" git -C "$CHROMIUM_SRC" apply --cached "$patch"
 done
+
+if [[ "$MODE" == "check" ]]; then
+  echo "All ${#patches[@]} WAE patch(es) apply cleanly to Chromium $ACTUAL_REVISION."
+  echo "No Chromium working-tree files were changed."
+  exit 0
+fi
 
 for patch in "${patches[@]}"; do
   echo "Applying $(basename "$patch")"
