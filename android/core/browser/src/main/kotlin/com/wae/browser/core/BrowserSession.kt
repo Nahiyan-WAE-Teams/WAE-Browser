@@ -132,7 +132,6 @@ class AddressBarResolver(
 
     private companion object {
         const val MAX_ADDRESS_CHARS = 8_192
-        const val MAX_PERSISTED_TABS = 50
         val SCHEME_PATTERN = Regex("^[A-Za-z][A-Za-z0-9+.-]*:")
     }
 }
@@ -272,6 +271,7 @@ class BrowserSessionController(
 
     private companion object {
         const val MAX_ADDRESS_CHARS = 8_192
+        const val MAX_PERSISTED_TABS = 50
     }
 
     private fun update(id: String, transform: (BrowserTab) -> BrowserTab): Boolean {
