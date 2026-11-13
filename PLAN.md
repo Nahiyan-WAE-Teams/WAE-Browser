@@ -24,7 +24,8 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 - [x] Implement initial browser workspace, local tab model, and per-tab address drafts.
 - [x] Add engine-independent session models, standard/private tab modes, and safe HTTP(S)/search address resolution.
 - [x] Define a persistence boundary that excludes private tabs and retains the active standard tab.
-- [ ] Implement a concrete persistence adapter and connect session state to real engine navigation.
+- [x] Implement a bounded DataStore persistence adapter; restore and save standard tabs through activity lifecycle callbacks, excluding private tabs and unsent address drafts.
+- [ ] Connect persisted session state to real engine navigation.
 - [ ] Complete navigation controls and settings.
 - [ ] Establish design tokens, typography, accessibility, responsive layouts, and restrained motion.
 - [ ] Respect system animation settings and provide an in-app motion preference.
