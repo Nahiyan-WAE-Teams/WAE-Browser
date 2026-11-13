@@ -11,7 +11,7 @@ This document distinguishes committed source work from functionality that is not
 - Compose-based dark browser workspace.
 - Compose tab strip is connected to the engine-independent browser session controller: create, select, close, and reset tabs.
 - Address drafts are kept per tab; entering text does not initiate network navigation.
-- Application-facing browser engine interfaces for tab lifecycle, navigation commands, state observation, download requests, site permission requests, file chooser requests, and renderer crashes.
+- Application-facing browser engine contracts for standard/private profile lifecycle, tab lifecycle, navigation commands and interception, state observation, download requests, site permission requests, file chooser requests, and renderer crashes.
 - Chromium POC source revision and ARM64 build notes.
 - Engine-independent browser session controller with standard/private tab modes and standard-tab-only persistence projection.
 - Address-bar resolver for HTTP(S) destinations and configurable search providers.
