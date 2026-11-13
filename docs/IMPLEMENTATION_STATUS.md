@@ -33,7 +33,7 @@ No Android build, emulator run, device run, or CI workflow has been executed for
 
 ## Next implementation sequence
 
-1. Define durable session/profile persistence interfaces and connect the navigation coordinator to the future engine event stream.
+1. Implement the Android persistence adapter and connect session updates to lifecycle-safe background writes.
 2. Build the pinned Chromium ARM64 target and validate the provisional integration decision in ADR-0001.
 3. Implement the engine adapter and connect real navigation/rendering.
 4. Add browser lifecycle, permissions, downloads, history, and persistence.
