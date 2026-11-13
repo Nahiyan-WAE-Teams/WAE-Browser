@@ -5,21 +5,23 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 ## Phase 0 — Repository and engineering foundation
 
 - [x] Establish product decisions and repository documentation.
+- [x] Set Android 10 (API 29) as the minimum supported OS.
 - [ ] Select the application license after reviewing Chromium and third-party obligations.
-- [ ] Define supported Android API range and minimum device requirements.
+- [ ] Define minimum device requirements beyond OS version (RAM, storage, CPU/ABI).
 - [ ] Verify current stable Android Gradle Plugin, Kotlin, Gradle, NDK, and Chromium revisions from primary sources.
+- [ ] Validate that the selected Chromium revision supports the Android 10 (API 29) floor.
 - [ ] Establish reproducible build inputs, dependency pinning, and an SBOM strategy.
 - [ ] Define signing-key custody and release provenance.
 
-**Exit:** approved toolchain matrix, build design, license decision, and security review checklist.
+**Exit:** approved toolchain matrix, verified Android API floor, build design, license decision, and security review checklist.
 
 ## Phase 1 — Android shell and product UI
 
 - [ ] Create the Android application module and baseline build.
 - [ ] Implement browser shell, tab model, address/search bar, navigation controls, and settings.
 - [ ] Establish design tokens, typography, accessibility, responsive layouts, and restrained motion.
-- [ ] Respect Android reduced-motion settings and provide an in-app motion preference.
-- [ ] Add UI state and navigation tests.
+- [ ] Respect system animation settings and provide an in-app motion preference.
+- [ ] Add UI state and navigation tests, including API 29 coverage.
 
 **Exit:** installable shell with no claim of production browsing until the engine is integrated.
 
@@ -80,7 +82,7 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 - [ ] Add dependency and license audits, SBOM generation, and reproducible-build checks.
 - [ ] Verify APK signing and release artifact provenance.
 - [ ] Publish security contact and vulnerability-reporting process.
-- [ ] Test upgrade, rollback, data migration, and emergency Chromium update paths.
+- [ ] Test upgrade, rollback, data migration, and emergency Chromium update paths on API 29 and a current Android release.
 - [ ] Publish APKs and release notes through GitHub Releases.
 
 **Exit:** signed release candidate with documented security baseline and support policy.
