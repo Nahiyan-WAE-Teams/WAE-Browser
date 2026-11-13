@@ -103,3 +103,22 @@ The source-level UI adaptation boundary is documented in [UI_ADAPTATION.md](../b
 6. Record the exact source SHA, build arguments, patch hashes, third-party notices, and update/rebase procedure.
 
 No Chromium source has been vendored or built in this repository yet.
+
+## 7. Android extension-platform constraint discovered in the pinned source
+
+The pinned Chromium buildflags show that a normal Android phone build does not compile the desktop extensions platform by default:
+
+- `enable_extensions` defaults to false when `is_android` is true.
+- `is_desktop_android` defaults to false in `build/config/chrome_build.gni`.
+- `enable_desktop_android_extensions` follows `is_desktop_android`.
+- `enable_extensions_core` defaults to the OR of those two flags and is therefore also false for the current ARM64 phone configuration.
+
+The upstream buildflags explain that most extension code has been moved under `enable_extensions_core` and ported to Android desktop, while code still guarded by `enable_extensions` is not yet ported or is explicitly excluded. This means WAE's Manifest V3 requirement cannot be met by merely adding an extension install screen or setting one GN flag. It needs a pinned-source feature audit and an explicit build/runtime compatibility milestone covering service workers, permissions, content scripts, storage, declarativeNetRequest, background events, incognito behavior, and package lifecycle.
+
+Do not set `is_desktop_android=true` or force `enable_extensions_core=true` in the mobile production args as a shortcut. First identify the missing mobile dependencies and build a reviewed port/compatibility layer; verify on Android 10 and current Android without weakening process or profile isolation. See the detailed ownership and source map in [browser/integration/README.md](../browser/integration/README.md#extension-feasibility-on-android-phones).
+
+## 8. Download backend ownership
+
+The pinned `chrome/browser/download/android/BUILD.gn` includes Chromium's `DownloadManagerBridge`, `DownloadDelegateImpl`, `DownloadManagerCoordinator`, `DownloadToolbarButtonController`, download warning dialogs, and file-provider components. WAE should integrate with Chromium's active download-item lifecycle and existing Android DownloadManager bridge. A parallel downloader would duplicate browser state and risk bypassing Chromium's dangerous/insecure download warnings, MIME handling, or file URI controls.
+
+Source: [pinned Android download build graph](https://github.com/chromium/chromium/blob/81ff2496eed313447d34079a6f45c57f9c5611c1/chrome/browser/download/android/BUILD.gn)
