@@ -29,7 +29,8 @@ These are not disposable presentation details. They are part of the browser's li
 The first meaningful product UI patch should be deliberately narrow:
 
 - Apply WAE application/widget labels from patch `0001-wae-app-name.patch`.
-- Keep the upstream toolbar and tab switcher initially; establish a stable WAE theme and restrained color/resource overrides without changing browser behavior.
+- Apply the tabbed-window system-bar/accent treatment from `0002-wae-tabbed-window-theme.patch`; it is limited to `Theme.Chromium.TabbedMode`.
+- Keep the upstream toolbar and tab switcher initially; do not claim the theme patch recolors Chromium's page-aware toolbar or omnibox.
 - Replace only clearly branded surfaces after identifying their owning coordinator and verifying the relevant resource overlays at the pinned revision.
 - Do not add a second tab strip or duplicate address-bar state in the existing Compose prototype.
 - Add WAE-specific controls one at a time, each wired to Chromium's existing action/delegate and profile lifecycle.
