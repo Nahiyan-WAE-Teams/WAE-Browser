@@ -192,7 +192,7 @@ class BrowserSessionController(
 
     @Synchronized
     fun commitNavigation(id: String, url: String): Boolean {
-        if (url.length > MAX_ADDRESS_CHARS) return false
+        if (url.length > MAX_ADDRESS_CHARS || !isSafeWebUrl(url)) return false
         return update(id) {
             it.copy(
                 currentUrl = url,
@@ -238,6 +238,17 @@ class BrowserSessionController(
             .forEach { tabs += it.copy(isLoading = false, progress = 0) }
         activeId = tabs.firstOrNull { it.id == preferredActiveId }?.id
             ?: tabs.firstOrNull()?.id
+    }
+
+    private fun isSafeWebUrl(value: String): Boolean = try {
+        val uri = URI(value)
+        (uri.scheme.equals("https", ignoreCase = true) ||
+            uri.scheme.equals("http", ignoreCase = true)) &&
+            !uri.host.isNullOrBlank() &&
+            uri.rawUserInfo == null &&
+            (uri.port == -1 || uri.port in 1..65535)
+    } catch (_: Exception) {
+        false
     }
 
     private companion object {
