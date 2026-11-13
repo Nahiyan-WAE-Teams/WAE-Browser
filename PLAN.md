@@ -10,8 +10,8 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 - [ ] Define minimum device requirements beyond OS version (RAM, storage, CPU/ABI).
 - [x] Verify current stable Android Gradle Plugin, Kotlin, Gradle, and Compose versions from primary sources; record them in docs/TOOLCHAIN.md.
 - [x] Add official Gradle 9.6.0 Wrapper scripts/JAR and pin the distribution SHA-256.
-- [ ] Verify and pin the NDK and exact Chromium revision from primary sources.
-- [ ] Validate that the selected Chromium revision supports the Android 10 (API 29) floor.
+- [x] Verify and pin the NDK and exact Chromium POC revision from primary sources.
+- [x] Validate that the selected Chromium revision supports the Android 10 (API 29) floor.
 - [ ] Establish reproducible build inputs, dependency pinning, and an SBOM strategy.
 - [ ] Define signing-key custody and release provenance.
 
@@ -31,7 +31,8 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 ## Phase 2 — Chromium integration
 
 - [x] Investigate official Chromium Android build requirements and distinguish a full browser APK from an embeddable engine library.
-- [ ] Resolve and pin an exact fully Stable Android Chromium upstream revision and record its security baseline.
+- [x] Resolve and pin an exact fully Stable Android Chromium upstream revision and record its security baseline.
+- [x] Verify the pinned revision's API 29 floor, Android SDK, Build Tools, NDK, and ARM64 build target.
 - [ ] Compare Chromium browser-fork and Content-layer integration paths with an ARM64 Android 10 proof of concept.
 - [ ] Build and package the selected Chromium integration for ARM64 using a documented, reproducible process.
 - [ ] Integrate browser tabs, navigation, rendering, downloads, permissions, and lifecycle.
