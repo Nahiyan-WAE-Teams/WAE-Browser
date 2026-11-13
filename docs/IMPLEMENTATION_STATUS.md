@@ -14,14 +14,14 @@ This document distinguishes committed source work from functionality that is not
 - Application-facing browser engine contracts for standard/private profile lifecycle, tab lifecycle, navigation commands and interception, state observation, download requests, site permission requests, file chooser requests, and renderer crashes.
 - Chromium POC source revision and ARM64 build notes.
 - Engine-independent browser session controller with standard/private tab modes and standard-tab-only persistence projection.
-- Durable session repository contract that structurally excludes private tabs and preserves the selected standard tab; no concrete database adapter is wired yet.
+- Durable session repository contract plus a concrete AndroidX DataStore 1.3.0 adapter. The Activity restores on startup and saves tab changes/onStop on an IO dispatcher; private tabs, unsent address drafts, and transient loading/security state are excluded. A single process-wide DataStore instance is reused.
 - Address-bar resolver for HTTP(S) destinations and configurable search providers.
 - Central top-level navigation policy and coordinator; unsupported schemes are rejected and external mail/tel actions require a direct user gesture.
 
 ## Not implemented yet
 
 - A concrete Chromium engine adapter and rendered web content.
-- Real network navigation/search execution, engine-enforced navigation interception, browser history, bookmarks, and concrete persistent tab storage.
+- Real network navigation/search execution, engine-enforced navigation interception, browser history, and bookmarks.
 - Production download execution, offline snapshots, extension runtime, privacy/network enforcement, or sync.
 - Release signing and production packaging.
 
@@ -33,10 +33,9 @@ No Android build, emulator run, device run, or CI workflow has been executed for
 
 ## Next implementation sequence
 
-1. Implement the Android persistence adapter and connect session updates to lifecycle-safe background writes.
-2. Build the pinned Chromium ARM64 target and validate the provisional integration decision in ADR-0001.
+1. Review and harden the session persistence implementation, then build the pinned Chromium ARM64 target and validate the provisional integration decision in ADR-0001.
 3. Implement the engine adapter and connect real navigation/rendering.
-4. Add browser lifecycle, permissions, downloads, history, and persistence.
+4. Add browser lifecycle, permissions, downloads, and history.
 5. Implement privacy, offline, extensions, and optional self-hosted sync.
 6. Complete security review and documentation.
 7. Introduce CI only after the implementation and code-review milestone.
