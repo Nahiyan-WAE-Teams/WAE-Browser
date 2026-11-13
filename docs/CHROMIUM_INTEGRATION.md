@@ -1,7 +1,7 @@
 # Chromium Android integration investigation
 
 **Verification date:** 2026-11-13  
-**Status:** A stable Chromium source revision is pinned for the first proof-of-concept; the integration path remains under evaluation.
+**Status:** Chromium Android browser-fork path selected; source-level map and first app-name patch committed; build and runtime proof-of-concept pending.
 
 ## 1. Stable source baseline pinned for the POC
 
@@ -82,9 +82,9 @@ Source: https://chromium.googlesource.com/chromium/src/+/f5be305cce08118a4983ac2
 
 Treat WebEngine as a research candidate only. Reconsider it only after its public API, supported release status, Android 10 compatibility, renderer/browser process isolation, and production sandbox guarantees are verified at the exact pinned revision.
 
-### Decision gate
+### Proof-of-concept gate
 
-Do not choose based on a demo or API name alone. Create a small proof-of-concept on the pinned revision and compare:
+Do not treat a demo or package rename as proof of a secure browser. Validate the selected Chromium Android browser-fork path on the pinned revision:
 1. Can it load arbitrary HTTPS pages with Chromium's certificate validation and sandboxing intact?
 2. Can it create and destroy independent tabs and recover from renderer crashes?
 3. Can it mediate permissions, file chooser, downloads, and navigation without bypassing browser security?
