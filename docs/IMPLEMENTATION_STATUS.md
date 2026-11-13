@@ -12,7 +12,10 @@ This document distinguishes committed source work from functionality that is not
 - Compose tab strip is connected to the engine-independent browser session controller: create, select, close, and reset tabs.
 - Address drafts are kept per tab; entering text does not initiate network navigation.
 - Application-facing browser engine interfaces for tab lifecycle, navigation commands, state observation, download requests, site permission requests, file chooser requests, and renderer crashes.
-- Chromium POC source revision and ARM64 build notes.\n- Engine-independent browser session controller with standard/private tab modes and standard-tab-only persistence projection.\n- Address-bar resolver for HTTP(S) destinations and configurable search providers.\n- Central top-level navigation policy and coordinator; unsupported schemes are rejected and external mail/tel actions require a direct user gesture.
+- Chromium POC source revision and ARM64 build notes.
+- Engine-independent browser session controller with standard/private tab modes and standard-tab-only persistence projection.
+- Address-bar resolver for HTTP(S) destinations and configurable search providers.
+- Central top-level navigation policy and coordinator; unsupported schemes are rejected and external mail/tel actions require a direct user gesture.
 
 ## Not implemented yet
 
