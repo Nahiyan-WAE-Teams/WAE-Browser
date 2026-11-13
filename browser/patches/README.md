@@ -13,4 +13,11 @@ This directory contains only reviewed, reproducible patches applied to the exact
 
 ## Current patch inventory
 
-No Chromium source patches have been authored or applied yet. The current WAE package namespace is selected through the GN args file at `../build/args/wae-arm64.gn`; it does not rename the app label, icons, or Chrome UI.
+### 0001 — WAE app name
+
+- File: `0001-wae-app-name.patch`
+- Source change: changes the manifest's `@string/app_name` from Chromium to WAE Browser in `chrome/android/java/res_chromium_base/values/channel_constants.xml`.
+- Base: exact Chromium lock revision `81ff2496eed313447d34079a6f45c57f9c5611c1`.
+- Validation: patch authored against the exact pinned file contents; `git apply --check` and Chromium build have not yet been run.
+
+The WAE package namespace is selected separately through `../build/args/wae-arm64.gn`. Launcher icons, product strings, and browser UI remain Chromium defaults until separately patched and reviewed.
