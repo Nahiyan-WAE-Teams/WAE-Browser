@@ -21,9 +21,9 @@ This document distinguishes committed source work from functionality that is not
 
 ## Not implemented yet
 
-- A Chromium source checkout/build, validated WAE app-name/launcher icon branding, actual toolbar/tab-switcher UI patches, and WAE-specific Chromium runtime integration. The new system-theme patch is presentation-only and has not been applied or built.
+- A Chromium source checkout/build, validated WAE app-name/launcher icon branding, actual toolbar/tab-switcher UI patches, and WAE-specific Chromium runtime integration. The new system-theme patch is presentation-only and has not been applied or built. The pinned-source map now records the actual Android download bridge and the mobile extension buildflag limitation.
 - Real network navigation/search execution, engine-enforced navigation interception, and browser history.
-- Production download execution, offline snapshots, extension runtime, privacy/network enforcement, or sync.
+- Production download execution, offline snapshots, extension runtime, privacy/network enforcement, or sync. The pinned Chromium source audit also found that the normal Android phone GN target disables both the full desktop extension platform and `enable_extensions_core` by default; mobile Manifest V3 support needs additional source/build/runtime work and cannot be claimed from an install UI.
 - Release signing and production packaging.
 
 The Compose Activity is a prototype for product/domain behavior, not the final Chromium host. Chromium's `chrome_public_apk` is a complete browser application; WAE runtime integration is selected to adapt `ChromeTabbedActivity` and Chromium's own tab/profile/UI lifecycle rather than embed the APK in the Compose app. The engine API remains a contract, not an implementation. The UI intentionally labels browsing unavailable.
