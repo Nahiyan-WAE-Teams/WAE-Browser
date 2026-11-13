@@ -99,7 +99,7 @@ class AddressBarResolver(
         if (parsed.host.isNullOrBlank() || parsed.rawUserInfo != null) {
             return NavigationTarget.Rejected("Address must contain a valid host and no embedded credentials")
         }
-        if (parsed.port !in -1..65535) {
+        if ((parsed.port != -1 && parsed.port !in 1..65535)) {
             return NavigationTarget.Rejected("Address contains an invalid port")
         }
         return NavigationTarget.WebUrl(parsed)
