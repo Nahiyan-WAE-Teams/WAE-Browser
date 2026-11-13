@@ -34,9 +34,11 @@ No Android build, emulator run, device run, or CI workflow has been executed for
 
 ## Next implementation sequence
 
-1. Complete source-level review of the Chromium patch boundary, then build the unmodified pinned ARM64 baseline and the separate WAE package-namespace variant on a suitable Linux host.
-2. Implement WAE branding and browser controls inside the Chromium Android application, preserving ChromeActivity and tab/profile lifecycles.
-3. Adapt navigation, downloads, permissions, and renderer recovery using the active APIs at the pinned revision.
-4. Implement privacy, offline, extensions, and optional self-hosted sync.
-5. Complete security review and documentation.
-6. Introduce CI only after the implementation and code-review milestone.
+1. Inspect the exact pinned Chromium source and GN targets in a full checkout; verify the tab selector/model observer signatures and choose the correct owning coordinator.
+2. Implement the read-only native tab-state bridge from `browser/integration/TAB_STATE_BRIDGE.md`, with attach/detach coverage and OTR privacy guarantees.
+3. Build the unmodified pinned ARM64 baseline and the separate WAE package-namespace variant on a suitable Linux host.
+4. Implement WAE branding and browser controls inside the Chromium Android application, preserving ChromeActivity and tab/profile lifecycles.
+5. Adapt navigation, downloads, permissions, and renderer recovery using the active APIs at the pinned revision; use `browser/integration/DOWNLOAD_BRIDGE.md` for the download ownership and security contract.
+6. Implement privacy, offline, extensions, and optional self-hosted sync.
+7. Complete security review and documentation.
+8. Introduce CI only after the implementation and code-review milestone.
