@@ -79,17 +79,21 @@ WAE-Browser/
 | engine/api | Browser engine contracts and lifecycle boundary | Engine-specific implementation |
 | engine/chromium | Chromium adapter and native integration | Product UI and policy decisions |
 
-## 4. Engine boundary
+## 4. Chromium runtime boundary
 
-The `:android:core:browser` module owns engine-independent tab/session state, address-bar resolution, and centralized top-level navigation decisions. `BrowserNavigationPolicy` rejects unsupported schemes and embedded credentials, and requires a direct user gesture before handing mail/tel actions to the platform. It is an application policy layer, not a replacement for Chromium URL/origin/certificate checks. `BrowserNavigationCoordinator` resolves address input and updates session state but deliberately performs no network I/O. Its session coordinator is in-memory. `BrowserSessionPersistence` and `BrowserSessionRepository` define the durable storage boundary; `PersistedBrowserSession` cannot contain private tabs and retains the selected standard tab. `DataStoreBrowserSessionRepository` implements this boundary with AndroidX DataStore 1.3.0. The Activity owns a single process-wide repository instance, restores before rendering the workspace, and saves tab mutations plus `onStop` snapshots on an IO dispatcher. The persisted schema is versioned and bounded; it stores standard-tab identity, title, URL, creation time, and selected standard tab only. It deliberately omits private tabs, unsent address drafts, loading/progress state, navigation capabilities, and transient security state. The initial `:android:engine:api` module defines the application-facing boundary. Extend it only when a real Chromium integration proves the need. The contract currently covers explicit standard/private profile lifecycle, tab creation/lifecycle, navigation commands, synchronous main-frame navigation interception (including redirects), state observation, download requests, site permission requests, file chooser requests, and renderer crashes. A private profile must be off-the-record and destroy all ephemeral state when closed. Define and review the complete engine API for:
-- Create/destroy tab and renderer lifecycle.
-- Navigate, stop, reload, back, and forward.
-- Observe navigation, loading, title, security state, and renderer failure.
-- Request downloads and file chooser actions.
-- Request site permissions through a policy broker.
-- Expose only the extension hooks that the pinned Chromium integration actually supports.
+The current Jetpack Compose `:android:app` module is a product/domain prototype. It is not the final runtime host. Chromium's `chrome_public_apk` is a complete Android browser application, not an AAR or embeddable engine. The selected architecture adapts Chromium's own Android browser application and its `ChromeTabbedActivity`, `ChromeActivity`, tab models, profiles, and UI coordinators.
 
-Do not assume Android WebView APIs are equivalent to Chromium's full browser embedding surface. The provisional integration decision is recorded in [ADR-0001](decisions/ADR-0001-chromium-android-integration.md): adapt Chromium's Android browser application layer unless a pinned-revision proof-of-concept demonstrates a safer, lower-maintenance Content embedder. The current API module is a contract only; no fake or WebView-backed implementation is permitted.
+The `:android:engine:api` module is an initial contract sketch, not a supported third-party Chromium embedding API. Do not implement a parallel WebContents host or attempt to load the full Chromium browser APK inside the Compose Activity. Actual WAE UI and browser policy integration must be implemented in a reviewed patch series inside the pinned Chromium source tree. See [ADR-0001](decisions/ADR-0001-chromium-android-integration.md) and the [pinned Chromium integration map](../browser/integration/README.md).
+
+The engine-independent `:android:core:browser` module remains useful for domain behavior and local persistence. Its address resolver and navigation policy are policy inputs only; Chromium must continue enforcing URL parsing, origin boundaries, redirects, certificates, renderer isolation, and subresource security. The DataStore repository persists only standard-tab session metadata for the prototype. It is not a substitute for Chromium's authoritative tab/profile persistence.
+
+Integration responsibilities:
+- Use Chromium's `TabModelSelector`, `TabModel`, and `Tab` as the authoritative tab model.
+- Use regular and off-the-record Chromium `Profile` objects; never equate a UI private-mode label with actual OTR isolation.
+- Keep `WebContents` and renderer lifecycle inside Chromium's existing tab/view ownership.
+- Adapt navigation, permissions, downloads, file chooser, and crash recovery at browser-owned Chromium seams.
+- Preserve Chromium's sandbox, site isolation, certificate validation, and helper-process manifest declarations.
+- Do not add a WebView fallback or expose privileged browser services to renderer/extension content.
 
 ## 5. Android compatibility
 
