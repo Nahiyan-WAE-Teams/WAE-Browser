@@ -60,6 +60,9 @@ class DataStoreBrowserSessionRepository(
             require(tab.id.length <= MAX_ID_CHARS)
             require(tab.title.length <= MAX_TITLE_CHARS)
             require(tab.currentUrl == null || tab.currentUrl.length <= MAX_URL_CHARS)
+            require(tab.currentUrl == null || isRestorableWebUrl(tab.currentUrl)) {
+                "Only valid HTTP(S) URLs can be persisted"
+            }
             tabs.put(
                 JSONObject()
                     .put("id", tab.id)
