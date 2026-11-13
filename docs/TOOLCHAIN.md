@@ -17,6 +17,8 @@
 | Compose compiler plugin | 2.4.10 | Matches the Kotlin/AGP compatibility example documented for AGP 9.5.0 |
 | Jetpack Compose BOM | 2026.09.00 | Current stable Compose BOM in Android Developers setup guidance |
 | Activity Compose | 1.13.0 | Version shown in current Android Developers Compose setup guidance |
+| AndroidX DataStore Preferences | 1.3.0 | Current stable DataStore release; used for bounded standard-tab session persistence |
+| Lifecycle Runtime KTX | 2.12.0 | Current stable Lifecycle release; supplies Activity lifecycle coroutine scope |
 
 ## Compatibility decisions
 
@@ -31,6 +33,8 @@ AGP 9.0+ enables built-in Kotlin by default. Do not also apply `org.jetbrains.ko
 - AGP built-in Kotlin migration guidance says not to apply `org.jetbrains.kotlin.android` on AGP 9+: https://developer.android.com/build/migrate-to-built-in-kotlin
 - Kotlin release history identifies 2.4.21 as released October 8, 2026: https://kotlinlang.org/docs/releases.html
 - Compose setup guidance specifies Compose BOM 2026.09.00 and Activity Compose 1.13.0: https://developer.android.com/develop/ui/compose/setup-compose-dependencies-and-compiler
+- AndroidX DataStore 1.3.0 stable release: https://developer.android.com/jetpack/androidx/releases/datastore
+- AndroidX Lifecycle 2.12.0 release information: https://developer.android.com/jetpack/androidx/releases/lifecycle
 - Gradle 9.6.0 binary distribution SHA-256: `bbaeb2fef8710818cf0e261201dab964c572f92b942812df0c3620d62a529a01`, published at https://gradle.org/release-checksums/
 - Gradle 9.6.0 Wrapper JAR SHA-256: `497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7`, published at https://gradle.org/release-checksums/
 - Chromium Android build instructions: https://chromium.googlesource.com/chromium/src/+/main/docs/android_build_instructions.md
