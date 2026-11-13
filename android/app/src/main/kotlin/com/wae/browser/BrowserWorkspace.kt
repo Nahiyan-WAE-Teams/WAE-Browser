@@ -1,9 +1,7 @@
 package com.wae.browser
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -80,7 +79,7 @@ internal fun BrowserWorkspace() {
                 tabs.forEach { tab ->
                     val selected = tab.id == activeTabId
                     Surface(
-                        onClick = {
+                        modifier = Modifier.clickable {
                             activeTabId = tab.id
                             addressDraft = tab.address
                         },
@@ -201,7 +200,7 @@ internal fun BrowserWorkspace() {
                             else MaterialTheme.colorScheme.secondary,
                         fontSize = 11.sp,
                         fontWeight = if (active) FontWeight.Bold else FontWeight.Normal,
-                        modifier = Modifier.padding(vertical = 8.dp)
+                        modifier = Modifier.padding(vertical = 8.dp).clickable { selectedSection = item }
                     )
                 }
             }
