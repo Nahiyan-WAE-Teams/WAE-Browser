@@ -68,7 +68,7 @@ WAE-Browser/
 
 | Module | Responsibility | Must not own |
 |---|---|---|
-| app | Dependency graph, lifecycle, top-level navigation | Browser policy implementation |
+| app | Dependency graph, lifecycle, top-level navigation | Browser policy implementation |\n| core/browser | Browser tab/session domain state and address resolution | Android UI and Chromium internals |
 | core/model | Stable domain types | Android UI |
 | core/database | Local records and migrations | Sync transport |
 | core/datastore | Preferences | Secret cryptographic protocol |
@@ -80,7 +80,7 @@ WAE-Browser/
 
 ## 4. Engine boundary
 
-The initial `:android:engine:api` module defines the application-facing boundary. Extend it only when a real Chromium integration proves the need. The contract currently covers tab creation/lifecycle, navigation, state observation, download requests, site permission requests, file chooser requests, and renderer crashes. Define and review the complete engine API for:
+The `:android:core:browser` module owns engine-independent tab/session state and address-bar resolution. Its session coordinator is in-memory; durable storage and private-session persistence rules must be implemented by the persistence layer. The initial `:android:engine:api` module defines the application-facing boundary. Extend it only when a real Chromium integration proves the need. The contract currently covers tab creation/lifecycle, navigation, state observation, download requests, site permission requests, file chooser requests, and renderer crashes. Define and review the complete engine API for:
 - Create/destroy tab and renderer lifecycle.
 - Navigate, stop, reload, back, and forward.
 - Observe navigation, loading, title, security state, and renderer failure.
