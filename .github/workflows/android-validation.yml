@@ -33,10 +33,17 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Set up Android SDK
+      - name: Set up stable Android SDK tools
         uses: android-actions/setup-android@v4
         with:
-          packages: "platforms;android-37 build-tools;37.0.0"
+          packages: "platforms;android-36 build-tools;36.0.0"
+
+      # Android 17 / API 37 is currently a preview SDK. Install it from the
+      # preview channel explicitly rather than asking setup-android to find
+      # it in the stable channel.
+      - name: Install Android 17 preview compile SDK
+        run: |
+          sdkmanager --channel=3 "platforms;android-37" "build-tools;37.0.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
