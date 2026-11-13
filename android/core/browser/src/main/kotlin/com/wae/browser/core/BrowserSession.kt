@@ -132,6 +132,7 @@ class AddressBarResolver(
 
     private companion object {
         const val MAX_ADDRESS_CHARS = 8_192
+        const val MAX_PERSISTED_TABS = 50
         val SCHEME_PATTERN = Regex("^[A-Za-z][A-Za-z0-9+.-]*:")
     }
 }
@@ -232,12 +233,21 @@ class BrowserSessionController(
 
     @Synchronized
     fun restoreStandardTabs(restored: List<BrowserTab>, preferredActiveId: String? = null) {
+        require(restored.size <= MAX_PERSISTED_TABS) { "Too many tabs to restore" }
+        require(restored.all { it.mode == BrowsingMode.STANDARD }) {
+            "Only standard tabs may be restored from durable session state"
+        }
+        require(restored.map(BrowserTab::id).distinct().size == restored.size) {
+            "Restored tab IDs must be unique"
+        }
+        require(preferredActiveId == null || restored.any { it.id == preferredActiveId }) {
+            "Preferred active tab must exist in the restored session"
+        }
+
+        val safeRestored = restored.map { it.copy(isLoading = false, progress = 0) }
         tabs.clear()
-        restored.filter { it.mode == BrowsingMode.STANDARD }
-            .distinctBy { it.id }
-            .forEach { tabs += it.copy(isLoading = false, progress = 0) }
-        activeId = tabs.firstOrNull { it.id == preferredActiveId }?.id
-            ?: tabs.firstOrNull()?.id
+        tabs.addAll(safeRestored)
+        activeId = preferredActiveId ?: tabs.firstOrNull()?.id
     }
 
     private fun isSafeWebUrl(value: String): Boolean = try {
