@@ -23,7 +23,7 @@ data class BrowserTab(
     val createdAtEpochMillis: Long
 ) {
     init {
-        require(id.isNotBlank())
+        require(id.isNotBlank() && id.length <= 128)
         require(progress in 0..100)
         require(title.length <= 512)
         require(createdAtEpochMillis >= 0)
@@ -73,6 +73,9 @@ class AddressBarResolver(
     private val searchProvider: SearchProvider = SearchProvider.DUCKDUCKGO
 ) {
     fun resolve(rawInput: String): NavigationTarget {
+        if (rawInput.length > MAX_ADDRESS_CHARS) {
+            return NavigationTarget.Rejected("Address exceeds the maximum length")
+        }
         val input = rawInput.trim()
         if (input.isEmpty()) return NavigationTarget.Rejected("Enter a search or web address")
         if (input.any { it.isISOControl() }) {
@@ -126,6 +129,7 @@ class AddressBarResolver(
     }
 
     private companion object {
+        const val MAX_ADDRESS_CHARS = 8_192
         val SCHEME_PATTERN = Regex("^[A-Za-z][A-Za-z0-9+.-]*:")
     }
 }
