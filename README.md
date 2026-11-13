@@ -15,7 +15,7 @@ WAE Browser is a privacy-focused Android browser project built around Chromium, 
 
 ## Current status
 
-The repository contains the product/security baseline and an initial Android application shell using Jetpack Compose. The shell is a UI foundation only: Chromium navigation, extension execution, privacy enforcement, downloads, and sync are not yet integrated. No release APK has been produced.
+The repository contains the product/security baseline, a Jetpack Compose Android shell, and a pinned Gradle 9.6.0 Wrapper. The shell is a UI foundation only: Chromium navigation, extension execution, privacy enforcement, downloads, and sync are not yet integrated. No release APK has been produced and the Android Gradle build has not yet been validated.
 
 Active implementation branch: [feat/android-foundation](https://github.com/Nahiyan-WAE-Teams/WAE-Browser/tree/feat/android-foundation).
 
@@ -33,12 +33,12 @@ Active implementation branch: [feat/android-foundation](https://github.com/Nahiy
 - Minimum SDK: 29 (Android 10)
 - Compile / target SDK: 36
 - Android Gradle Plugin: 9.5.0
-- Gradle: 9.6.0
-- Kotlin: 2.4.21
+- Gradle Wrapper: 9.6.0 (distribution checksum pinned)
 - JDK: 17
+- AGP built-in Kotlin; Compose compiler plugin 2.4.10
 - Compose BOM: 2026.09.00
 
-See [docs/TOOLCHAIN.md](docs/TOOLCHAIN.md) for source references and constraints. These versions have been checked against upstream documentation but have not yet been validated by a Gradle build in this repository.
+See [docs/TOOLCHAIN.md](docs/TOOLCHAIN.md) for source references, compatibility decisions, and validation status.
 
 ## Development principles
 
