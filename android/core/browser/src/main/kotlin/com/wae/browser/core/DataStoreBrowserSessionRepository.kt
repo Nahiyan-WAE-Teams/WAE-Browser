@@ -50,6 +50,16 @@ class DataStoreBrowserSessionRepository(
         }
     }
 
+    /**
+     * Explicitly discard the stored session after the user confirms recovery.
+     * This is intentionally not called automatically when decoding fails.
+     */
+    suspend fun clear() {
+        dataStore.edit { preferences ->
+            preferences.remove(SESSION_JSON)
+        }
+    }
+
     private fun encode(session: PersistedBrowserSession): String {
         val root = JSONObject()
             .put("schemaVersion", SCHEMA_VERSION)
