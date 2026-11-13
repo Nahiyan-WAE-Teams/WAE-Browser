@@ -17,7 +17,7 @@ This document distinguishes committed source work from functionality that is not
 ## Not implemented yet
 
 - A concrete Chromium engine adapter and rendered web content.
-- Real navigation, search-provider integration, browser history, bookmarks, and persistent tab sessions.
+- Real navigation and search execution, browser history, bookmarks, and persistent tab sessions.
 - Production download execution, offline snapshots, extension runtime, privacy/network enforcement, or sync.
 - Release signing and production packaging.
 
