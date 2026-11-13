@@ -1,6 +1,6 @@
 # ADR-0001: Chromium Android integration strategy
 
-- **Status:** Provisional decision; proof-of-concept required before release commitment.
+- **Status:** Selected implementation direction; pinned-revision proof-of-concept and security review still required.
 - **Date:** 2026-11-13
 - **Scope:** Browser engine and Android application integration.
 
@@ -51,7 +51,7 @@ Rejected as the primary engine. WebView is not intended as a framework for build
 
 **Use option A as the default implementation direction: adapt Chromium's Android browser application layer rather than build a new Content embedder from scratch.**
 
-This is a provisional engineering decision, not a claim that the existing Compose shell can already host Chromium. The proof-of-concept must determine the narrowest maintainable seam between WAE product UI and Chromium's Android browser services. If that seam requires replacing the existing app entry point or moving browser surfaces out of Compose, document the trade-off before changing the application structure.
+This selects the Chromium Android browser application as the runtime host. The existing standalone Compose Activity cannot simply host `chrome_public_apk` as an engine library: the upstream target is a complete browser APK, and Chromium's `ChromeTabbedActivity` is declared directly in its Android manifest. Therefore, the current Compose workspace is a UI/domain prototype, not the eventual runtime shell. WAE controls and product UI must be integrated inside the Chromium Android application at a reviewed Java/Kotlin/Views seam; Compose may be retained only where a supported integration point is demonstrated. The pinned revision's `chrome_public_manifest_package` GN arg provides the WAE package namespace (`com.wae.browser`), but package renaming alone is not full WAE branding.
 
 Do not build a parallel Content embedder merely to preserve Compose. A custom Content integration may be reconsidered only if a pinned-revision POC demonstrates that all required browser responsibilities and Android process protections can be maintained with a materially lower long-term security and rebase burden.
 
