@@ -123,7 +123,9 @@ class DataStoreBrowserSessionRepository(
         val uri = URI(value)
         (uri.scheme.equals("https", ignoreCase = true) ||
             uri.scheme.equals("http", ignoreCase = true)) &&
-            !uri.host.isNullOrBlank() && uri.rawUserInfo == null
+            !uri.host.isNullOrBlank() &&
+            uri.rawUserInfo == null &&
+            (uri.port == -1 || uri.port in 1..65535)
     } catch (_: Exception) {
         false
     }
