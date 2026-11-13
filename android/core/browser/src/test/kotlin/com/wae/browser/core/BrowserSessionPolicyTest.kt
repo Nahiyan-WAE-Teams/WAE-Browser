@@ -4,6 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class BrowserSessionPolicyTest {
@@ -90,9 +91,35 @@ class BrowserSessionPolicyTest {
         assertFalse(controller.commitNavigation(tab.id, "javascript:alert(1)"))
         assertFalse(controller.commitNavigation(tab.id, "https://user:pass@example.com"))
         assertFalse(controller.commitNavigation(tab.id, "https://example.com:0"))
+        assertNull(controller.snapshot().activeTab?.currentUrl)
+        assertEquals("", controller.snapshot().activeTab?.pendingInput)
+
         assertTrue(controller.commitNavigation(tab.id, "https://example.com/path"))
         assertEquals("https://example.com/path", controller.snapshot().activeTab?.currentUrl)
-        assertEquals("", controller.snapshot().activeTab?.pendingInput)
-        assertEquals(null, controller.snapshot().activeTab?.currentUrl)
+        assertEquals("https://example.com/path", controller.snapshot().activeTab?.pendingInput)
+    }
+
+    @Test
+    fun persistedSessionRejectsPrivateTabsDuplicateIdsAndMissingActiveTab() {
+        val standard = BrowserTab(
+            id = "standard",
+            mode = BrowsingMode.STANDARD,
+            title = "Example",
+            currentUrl = "https://example.com",
+            pendingInput = "https://example.com",
+            createdAtEpochMillis = 1L
+        )
+        val privateTab = standard.copy(id = "private", mode = BrowsingMode.PRIVATE)
+
+        assertThrows(IllegalArgumentException::class.java) {
+            PersistedBrowserSession(listOf(privateTab), null)
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            PersistedBrowserSession(listOf(standard, standard.copy(title = "Duplicate")), "standard")
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            PersistedBrowserSession(listOf(standard), "missing")
+        }
+        assertEquals(listOf(standard), PersistedBrowserSession(listOf(standard), "standard").tabs)
     }
 }
