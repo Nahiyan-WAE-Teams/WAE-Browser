@@ -27,8 +27,10 @@ sealed interface NavigationDecision {
  * Central policy for destinations requested by pages or the address bar.
  *
  * The engine must call this for top-level navigations, including redirects.
- * It is not a replacement for Chromium's URL, origin, certificate, or
- * renderer security checks.
+ * Subframe requests are deliberately delegated to Chromium so document-local
+ * schemes and embedded-resource behavior remain governed by Chromium's own
+ * origin and renderer security model. This policy is not a replacement for
+ * Chromium's URL, origin, certificate, or renderer security checks.
  */
 class BrowserNavigationPolicy {
     private companion object {
