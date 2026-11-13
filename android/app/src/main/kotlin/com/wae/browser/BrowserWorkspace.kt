@@ -138,7 +138,16 @@ internal fun BrowserWorkspace() {
                     Spacer(Modifier.width(10.dp))
                     BasicTextField(
                         value = addressDraft,
-                        onValueChange = { addressDraft = it },
+                        onValueChange = {
+                            addressDraft = it
+                            val index = tabs.indexOfFirst { tab -> tab.id == activeTabId }
+                            if (index >= 0) {
+                                tabs[index] = tabs[index].copy(
+                                    address = it,
+                                    title = if (it.isBlank()) "New tab" else it.take(24)
+                                )
+                            }
+                        },
                         modifier = Modifier.weight(1f),
                         singleLine = true,
                         textStyle = MaterialTheme.typography.bodyMedium.copy(
