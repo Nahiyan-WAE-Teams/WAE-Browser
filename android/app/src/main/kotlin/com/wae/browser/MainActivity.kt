@@ -12,9 +12,8 @@ import com.wae.browser.core.BrowserSessionController
 import com.wae.browser.core.DataStoreBrowserBookmarkRepository
 import com.wae.browser.core.BrowserSessionPersistence
 import com.wae.browser.core.DataStoreBrowserSessionRepository
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -36,8 +35,13 @@ class MainActivity : ComponentActivity() {
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                runCatching { sessionPersistence.restoreInto(sessionController) }
-                    .onFailure { Log.e(TAG, "Could not restore browser session", it) }
+                try {
+                    sessionPersistence.restoreInto(sessionController)
+                } catch (error: CancellationException) {
+                    throw error
+                } catch (error: Exception) {
+                    Log.e(TAG, "Could not restore browser session", error)
+                }
             }
             if (sessionController.snapshot().tabs.isEmpty()) {
                 sessionController.createTab()
@@ -84,14 +88,21 @@ class MainActivity : ComponentActivity() {
 }
 
 private object BrowserSessionRepositoryProvider {
-    private val persistenceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val persistenceScope = kotlinx.coroutines.CoroutineScope(
+        kotlinx.coroutines.SupervisorJob() + Dispatchers.IO
+    )
     private val writeMutex = Mutex()
 
     fun persist(persistence: BrowserSessionPersistence, controller: BrowserSessionController) {
         persistenceScope.launch {
             writeMutex.withLock {
-                runCatching { persistence.saveFrom(controller) }
-                    .onFailure { Log.e("WaeBrowserSession", "Could not persist browser session", it) }
+                try {
+                    persistence.saveFrom(controller)
+                } catch (error: CancellationException) {
+                    throw error
+                } catch (error: Exception) {
+                    Log.e("WaeBrowserSession", "Could not persist browser session", error)
+                }
             }
         }
     }
