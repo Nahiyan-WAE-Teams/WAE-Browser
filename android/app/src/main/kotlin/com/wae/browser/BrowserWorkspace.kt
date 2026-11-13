@@ -200,9 +200,9 @@ internal fun BrowserWorkspace(
                             Text(activeTab.title, fontWeight = FontWeight.Medium)
                             Text(
                                 if (activeTab.mode == BrowsingMode.PRIVATE) {
-                                    "PRIVATE SESSION · EPHEMERAL MODEL"
+                                    "PRIVATE TAB · PROFILE ISOLATION PENDING"
                                 } else {
-                                    "STANDARD SESSION"
+                                    "STANDARD TAB · ENGINE PENDING"
                                 },
                                 fontSize = 10.sp,
                                 color = MaterialTheme.colorScheme.secondary,
