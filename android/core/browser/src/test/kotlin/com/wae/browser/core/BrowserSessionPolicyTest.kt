@@ -174,5 +174,19 @@ class BrowserSessionPolicyTest {
         assertEquals("second", restored.activeTabId)
         assertEquals(listOf("first", "second"), restored.tabs.map { it.id })
         assertTrue(restored.tabs.none { it.isLoading || it.progress != 0 })
+        assertEquals("https://one.example", restored.tabs[0].pendingInput)
+        assertEquals("https://two.example", restored.tabs[1].pendingInput)
     }
+    @Test
+    fun persistedProjectionRemovesUnsentAddressDrafts() {
+        val controller = BrowserSessionController(newId = { "draft-tab" })
+        val tab = controller.createTab()
+        assertTrue(controller.commitNavigation(tab.id, "https://example.com"))
+        assertTrue(controller.updatePendingInput(tab.id, "unsent search terms"))
+
+        val persisted = PersistedBrowserSession.from(controller.snapshot())
+
+        assertEquals("https://example.com", persisted.tabs.single().pendingInput)
+    }
+
 }
