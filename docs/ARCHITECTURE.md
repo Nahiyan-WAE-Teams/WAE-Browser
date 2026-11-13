@@ -1,6 +1,8 @@
 # WAE Browser — Module Architecture
 
-**Status:** Proposed architecture; no application modules have been implemented yet.
+**Status:** Proposed architecture; no application modules have been implemented yet.  
+**Minimum Android version:** Android 10 (API 29).  
+**Initial ABI:** ARM64.
 
 ## 1. Architectural principles
 
@@ -9,6 +11,7 @@
 - Keep the application local-first; sync is an optional transport.
 - Make permission and privacy decisions explicit and auditable.
 - Avoid custom cryptography and avoid patching Chromium security invariants for convenience.
+- Treat API 29 as a compatibility floor, not as a reason to weaken security or rely on obsolete platform behavior.
 
 ## 2. Proposed repository layout
 
@@ -87,7 +90,15 @@ Define a small engine API for:
 
 Do not assume Android WebView APIs are equivalent to Chromium's full browser embedding surface. The integration strategy must be validated against the chosen Chromium revision before committing to implementation.
 
-## 5. Extension subsystem
+## 5. Android compatibility
+
+- Set the app minimum SDK to API 29 (Android 10).
+- Test API 29 behavior for scoped storage, package visibility, background execution, notifications, and document-provider interactions.
+- Use runtime feature checks where platform APIs differ across supported Android releases.
+- Verify the selected Chromium revision's Android minimum before pinning it; the app's API floor cannot be lower than the engine's actual support floor.
+- Keep target SDK current at release time and handle newer permission/platform behavior without breaking API 29.
+
+## 6. Extension subsystem
 
 Proposed components:
 - Package importer and bounded archive parser.
@@ -100,7 +111,7 @@ Proposed components:
 
 All extension API calls must be mediated by a permission-aware bridge. The runtime must not expose privileged browser internals directly to extension scripts.
 
-## 6. Privacy/network subsystem
+## 7. Privacy/network subsystem
 
 - A single policy model feeds UI, engine integration, and diagnostics.
 - Resolver selection is explicit and visible.
@@ -108,7 +119,7 @@ All extension API calls must be mediated by a permission-aware bridge. The runti
 - No silent plaintext fallback.
 - Ruleset updates are versioned and have source/provenance metadata.
 
-## 7. Sync subsystem
+## 8. Sync subsystem
 
 - Local database remains authoritative when sync is off.
 - Sync adapter serializes versioned records and encrypts client-side.
@@ -117,10 +128,10 @@ All extension API calls must be mediated by a permission-aware bridge. The runti
 - Conflict resolution is deterministic and testable.
 - Cryptographic protocol selection requires a separate review before code.
 
-## 8. Dependency direction
+## 9. Dependency direction
 
 UI features depend on domain contracts, not Chromium implementation classes. Chromium integration depends on engine contracts and security policy interfaces. Sync depends on domain records and cryptographic interfaces, not UI. No feature module should reach around the permission broker.
 
-## 9. Build and verification strategy
+## 10. Build and verification strategy
 
 Pin toolchain and Chromium revisions. Record source URLs, commit hashes, build flags, patch hashes, and license inventory. Validate modules with targeted tests first; defer expensive full Chromium CI until integration milestones justify it.
