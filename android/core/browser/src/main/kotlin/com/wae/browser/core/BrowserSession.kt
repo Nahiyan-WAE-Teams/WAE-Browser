@@ -26,6 +26,7 @@ data class BrowserTab(
         require(id.isNotBlank())
         require(progress in 0..100)
         require(title.length <= 512)
+        require(createdAtEpochMillis >= 0)
     }
 }
 
