@@ -63,7 +63,7 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 
 ## Phase 4 — Downloads and offline
 
-- [ ] Adapt Chromium's pinned Android download-item backend, `DownloadManagerBridge`, and download UI; preserve Chromium warning/confirmation and file-provider flows.
+- [x] Specify Chromium-owned Android download integration, active backend ownership, OTR privacy, safe URI handling, and acceptance criteria (adapter/UI implementation remains pending).\n- [ ] Adapt Chromium's pinned Android download-item backend, `DownloadManagerBridge`, and download UI; preserve Chromium warning/confirmation and file-provider flows.
 - [ ] Add WAE queue presentation and user controls (pause/resume/retry only where the pinned backend supports them); do not create a parallel network downloader.
 - [ ] Verify downloaded content with hashes where applicable and validate MIME/signature consistency.
 - [ ] Warn on executable or suspicious content; never auto-open downloads.
