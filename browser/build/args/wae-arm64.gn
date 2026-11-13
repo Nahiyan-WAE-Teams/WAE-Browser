@@ -1,0 +1,6 @@
+# WAE's Android package namespace for the Chromium browser target.
+# This is not a full brand/UI patch: app label, icons, and Chrome UI adaptation
+# remain separate reviewed source changes.
+target_os = "android"
+target_cpu = "arm64"
+chrome_public_manifest_package = "com.wae.browser"
