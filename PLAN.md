@@ -19,7 +19,8 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 
 ## Phase 1 — Android shell and product UI
 
-- [x] Create the initial Android application module and Compose baseline (Gradle build still pending).
+- [x] Create the initial Android application module and Compose baseline.
+- [x] Add the Gradle Wrapper and split out the engine API contract module (actual Android build validation still pending).
 - [ ] Implement browser shell, tab model, address/search bar, navigation controls, and settings.
 - [ ] Establish design tokens, typography, accessibility, responsive layouts, and restrained motion.
 - [ ] Respect system animation settings and provide an in-app motion preference.
