@@ -34,8 +34,8 @@ No Android build, emulator run, device run, or CI workflow has been executed for
 ## Next implementation sequence
 
 1. Review and harden the session persistence implementation, then build the pinned Chromium ARM64 target and validate the provisional integration decision in ADR-0001.
-3. Implement the engine adapter and connect real navigation/rendering.
-4. Add browser lifecycle, permissions, downloads, and history.
-5. Implement privacy, offline, extensions, and optional self-hosted sync.
-6. Complete security review and documentation.
-7. Introduce CI only after the implementation and code-review milestone.
+2. Implement the engine adapter and connect real navigation/rendering.
+3. Add browser lifecycle, permissions, downloads, and history.
+4. Implement privacy, offline, extensions, and optional self-hosted sync.
+5. Complete security review and documentation.
+6. Introduce CI only after the implementation and code-review milestone.
