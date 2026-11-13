@@ -63,6 +63,7 @@ class MainActivity : ComponentActivity() {
 
             setContent {
                 var recoveryComplete by remember { mutableStateOf(restored) }
+                var recoveryBusy by remember { mutableStateOf(false) }
                 MaterialTheme(
                     colorScheme = darkColorScheme(
                         primary = Color(0xFFB5C8FF),
@@ -87,24 +88,38 @@ class MainActivity : ComponentActivity() {
                                 )
                             },
                             confirmButton = {
-                                Button(onClick = {
-                                    lifecycleScope.launch {
-                                        try {
-                                            withContext(Dispatchers.IO) {
-                                                sessionRepository.clear()
+                                Button(
+                                    enabled = !recoveryBusy,
+                                    onClick = {
+                                        if (recoveryBusy) return@Button
+                                        recoveryBusy = true
+                                        lifecycleScope.launch {
+                                            try {
+                                                withContext(Dispatchers.IO) {
+                                                    sessionRepository.clear()
+                                                }
+                                                sessionController.createTab()
+                                                sessionPersistenceAllowed = true
+                                                sessionReady = true
+                                                recoveryComplete = true
+                                            } catch (error: CancellationException) {
+                                                throw error
+                                            } catch (error: Exception) {
+                                                recoveryBusy = false
+                                                Log.e(TAG, "Could not reset the unreadable browser session", error)
                                             }
-                                            sessionController.createTab()
-                                            sessionPersistenceAllowed = true
-                                            sessionReady = true
-                                            recoveryComplete = true
-                                        } catch (error: CancellationException) {
-                                            throw error
-                                        } catch (error: Exception) {
-                                            Log.e(TAG, "Could not reset the unreadable browser session", error)
                                         }
                                     }
-                                }) {
-                                    Text("Reset saved session")
+                                ) {
+                                    Text(if (recoveryBusy) "Resetting…" else "Reset saved session")
+                                }
+                            },
+                            dismissButton = {
+                                Button(
+                                    enabled = !recoveryBusy,
+                                    onClick = { finish() }
+                                ) {
+                                    Text("Exit without resetting")
                                 }
                             }
                         )
