@@ -21,7 +21,11 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 
 - [x] Create the initial Android application module and Compose baseline.
 - [x] Add the Gradle Wrapper and split out the engine API contract module (actual Android build validation still pending).
-- [x] Implement initial browser workspace, local tab model, and per-tab address drafts.\n- [x] Add engine-independent session models and safe HTTP(S)/search address resolution.\n- [ ] Connect session domain state to persistent storage and real engine navigation.\n- [ ] Complete navigation controls and settings.
+- [x] Implement initial browser workspace, local tab model, and per-tab address drafts.
+- [x] Add engine-independent session models, standard/private tab modes, and safe HTTP(S)/search address resolution.
+- [x] Define a persistence boundary that excludes private tabs and retains the active standard tab.
+- [ ] Implement a concrete persistence adapter and connect session state to real engine navigation.
+- [ ] Complete navigation controls and settings.
 - [ ] Establish design tokens, typography, accessibility, responsive layouts, and restrained motion.
 - [ ] Respect system animation settings and provide an in-app motion preference.
 - [ ] Add UI state and navigation tests, including API 29 coverage.
@@ -33,8 +37,9 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 - [x] Investigate official Chromium Android build requirements and distinguish a full browser APK from an embeddable engine library.
 - [x] Resolve and pin an exact fully Stable Android Chromium upstream revision and record its security baseline.
 - [x] Verify the pinned revision's API 29 floor, Android SDK, Build Tools, NDK, and ARM64 build target.
-- [ ] Compare Chromium browser-fork and Content-layer integration paths with an ARM64 Android 10 proof of concept.
-- [ ] Build and package the selected Chromium integration for ARM64 using a documented, reproducible process.
+- [x] Record a provisional decision to adapt Chromium's Android browser application layer rather than build a new Content embedder (ADR-0001).
+- [ ] Build the pinned Chromium ARM64 baseline and validate the browser-fork integration seam with an Android 10 proof of concept.
+- [ ] Package the selected Chromium integration for ARM64 using a documented, reproducible process.
 - [ ] Integrate browser tabs, navigation, rendering, downloads, permissions, and lifecycle.
 - [ ] Preserve Chromium sandboxing, site isolation, certificate validation, and process boundaries.
 - [ ] Add smoke, navigation, crash, and security regression tests.
