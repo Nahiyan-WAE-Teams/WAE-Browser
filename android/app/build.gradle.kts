@@ -5,11 +5,14 @@ plugins {
 
 android {
     namespace = "com.wae.browser"
-    compileSdk = 36
+    // Compose and Lifecycle versions selected by the stable BOM require API 37
+    // at compile time. This does not raise the Android 10 (API 29) minimum.
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.wae.browser"
         minSdk = 29
+        // Keep runtime behavior opt-in separate from compile-time API access.
         targetSdk = 36
         versionCode = 1
         versionName = "0.1.0-dev"
