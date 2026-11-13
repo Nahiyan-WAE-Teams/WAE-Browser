@@ -38,9 +38,14 @@ if (( ${#patches[@]} == 0 )); then
   exit 1
 fi
 
+# Preflight the complete series before modifying the checkout. A later
+# patch conflict must not leave an earlier subset silently applied.
 for patch in "${patches[@]}"; do
   echo "Checking $(basename "$patch")"
   git -C "$CHROMIUM_SRC" apply --check "$patch"
+done
+
+for patch in "${patches[@]}"; do
   echo "Applying $(basename "$patch")"
   git -C "$CHROMIUM_SRC" apply "$patch"
 done
