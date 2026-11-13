@@ -67,6 +67,12 @@ gn gen out/WAEBrand --args='target_os="android" target_cpu="arm64" chrome_public
 autoninja -C out/WAEBrand chrome_public_apk
 ```
 
-The GN arg `chrome_public_manifest_package` is declared by Chromium's `chrome/android/chrome_public_apk_tmpl.gni` and is consumed by the public browser target. This changes the Android application package namespace only. It does not change the launcher label, icons, product strings, or Chrome's browser UI. Those require a separate, reviewed Chromium patch set.
+The GN arg `chrome_public_manifest_package` is declared by Chromium's `chrome/android/chrome_public_apk_tmpl.gni` and is consumed by the public browser target. It changes the Android application package namespace. The first reviewed source patch changes the manifest launcher label to WAE Browser:
 
-Do not apply branding patches or ship this package-namespace build as WAE Browser until the source overlay and runtime integration are reviewed. Do not add remote execution, production signing, or release GN flags until the baseline build is reviewed. No command in this guide has been run by this repository's current build environment.
+```sh
+WAE_REPO=/path/to/WAE-Browser
+git -C "$HOME/wae-chromium/src" apply "$WAE_REPO/browser/patches/0001-wae-app-name.patch"
+git -C "$HOME/wae-chromium/src" diff --check
+```
+
+The patch is authored against the locked source file but has not yet been validated with `git apply --check` or a Chromium build. Launcher icons, remaining product strings, and Chrome's browser UI remain upstream defaults. Do not ship this package-namespace/app-name build as WAE Browser until the source overlay and runtime integration are reviewed. Do not add remote execution, production signing, or release GN flags until the baseline build is reviewed. No command in this guide has been run by this repository's current build environment.
