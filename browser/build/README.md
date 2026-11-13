@@ -64,13 +64,17 @@ After the unmodified baseline is reviewed, apply the WAE patch series to a clean
 
 ```sh
 WAE_REPO=/path/to/WAE-Browser
-bash "$WAE_REPO/browser/build/apply_wae_patches.sh" "$HOME/wae-chromium/src"
+# Non-mutating preflight first; validates the entire ordered patch series.
+bash "$WAE_REPO/browser/build/apply_wae_patches.sh" --check "$HOME/wae-chromium/src"
+
+# Apply only after reviewing the preflight result.
+bash "$WAE_REPO/browser/build/apply_wae_patches.sh" --apply "$HOME/wae-chromium/src"
 
 gn gen out/WAEBrand --args="$(cat "$WAE_REPO/browser/build/args/wae-arm64.gn")"
 autoninja -C out/WAEBrand chrome_public_apk
 ```
 
-The script reads the expected source SHA from `browser/revisions/chromium.lock`, refuses a mismatched or dirty Chromium checkout, preflights the ordered patch series against a temporary Git index (including dependencies between patches), then applies the series and runs `git diff --check`.
+The script reads the expected source SHA from `browser/revisions/chromium.lock`, refuses a mismatched or dirty Chromium checkout, preflights the ordered patch series against a temporary Git index (including dependencies between patches), then either exits without modifying the checkout (`--check`) or applies the series and runs `git diff --check` (`--apply`, the default).
 
 The GN arg `chrome_public_manifest_package` is declared by Chromium's `chrome/android/chrome_public_apk_tmpl.gni` and changes the Android application package namespace. Patch `0001` changes the app name and related bookmark/search widget labels to WAE Browser. Patch `0002` applies WAE's dark system bars and blue accent only to the tabbed browser Activity theme; it does not replace Chromium's toolbar, omnibox, tab switcher, launcher icons, or remaining product strings.
 
