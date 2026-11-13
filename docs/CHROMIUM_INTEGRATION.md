@@ -52,7 +52,7 @@ The pinned Chromium Android build guide documents:
 - ARM64 GN configuration using `target_os = "android"` and `target_cpu = "arm64"`.
 - `autoninja -C out/Default chrome_public_apk` as the documented build command.
 
-The minimal initial GN arguments are committed in [browser/build/args/arm64.gn](../browser/build/args/arm64.gn). Do not add remote-execution or release flags until the host environment and reproducibility requirements are selected.
+The minimal initial GN arguments are committed in [browser/build/args/arm64.gn](../browser/build/args/arm64.gn), and the pinned checkout/build steps are documented in [browser/build/README.md](../browser/build/README.md). Do not add remote-execution or release flags until the host environment and reproducibility requirements are selected.
 
 ## 4. Important packaging distinction
 
