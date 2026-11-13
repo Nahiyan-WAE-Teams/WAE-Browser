@@ -63,7 +63,8 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 
 ## Phase 4 — Downloads and offline
 
-- [ ] Build a queue-based download manager with pause, resume, retry, and concurrency limits.
+- [ ] Adapt Chromium's pinned Android download-item backend, `DownloadManagerBridge`, and download UI; preserve Chromium warning/confirmation and file-provider flows.
+- [ ] Add WAE queue presentation and user controls (pause/resume/retry only where the pinned backend supports them); do not create a parallel network downloader.
 - [ ] Verify downloaded content with hashes where applicable and validate MIME/signature consistency.
 - [ ] Warn on executable or suspicious content; never auto-open downloads.
 - [ ] Add offline page snapshots and reader mode.
@@ -73,8 +74,9 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 
 ## Phase 5 — Extension compatibility
 
-- [ ] Define the supported extension manifest and API compatibility matrix.
-- [ ] Start with Manifest V3 and a deliberately limited, documented API surface.
+- [x] Audit pinned Chromium Android extension buildflags: the default ARM64 phone build has neither the desktop extensions platform nor `enable_extensions_core` enabled; enabling the desktop-Android path is not equivalent to full mobile MV3 support.
+- [ ] Define the supported extension manifest and API compatibility matrix from a source-level audit of the exact pinned revision.
+- [ ] Start with Manifest V3 and a deliberately limited, documented API surface, after proving the required runtime services can be built and operated on Android phones.
 - [ ] Support explicit installation from local extension packages and trusted release sources.
 - [ ] Validate package structure, manifest, permissions, origin, and integrity before install.
 - [ ] Isolate extension execution and storage; provide per-extension disable/remove controls.
