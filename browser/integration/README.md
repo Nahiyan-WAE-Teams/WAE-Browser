@@ -26,17 +26,20 @@ The standalone Compose `MainActivity` is not the eventual Chromium host. The WAE
 | Profiles and private isolation | `Profile`, `ProfileManager`, `OtrProfileId` | Use regular and off-the-record profiles. A private tab must use an OTR profile and must not be restored or serialized. |
 | Page contents and rendering | `Tab.getWebContents()`, `WebContents`, Chromium compositor/view ownership | Keep WebContents attached through Chromium's tab/view lifecycle. Do not create a second renderer host. |
 | Downloads | Chromium download backend and browser download UI | Inspect the pinned backend before adapting. The older `DownloadManagerService.DownloadObserver` API is explicitly marked deprecated in this revision; do not make it the new WAE integration contract. |
-| Site permissions | Chromium's existing permission request and origin mediation pipeline | Adapt the decision UI at the existing browser coordinator. Never grant permission from renderer-provided UI state or bypass Android runtime permissions. |
-| Navigation and security | Chromium navigation stack, `WebContents`, `NavigationHandle`, certificate/security UI | Add WAE policy at browser-owned navigation hooks while retaining Chromium's redirects, origin checks, certificate validation, and subresource security. |
-| Renderer failure | Chromium tab/WebContents render-process lifecycle observers | Reuse Chromium crash/recovery behavior and test that dead contents cannot be reused as live tabs. |
+| Site permissions | `components/permissions/android/permission_prompt/PermissionPromptAndroid` and `PermissionDialogDelegate` | Adapt the existing prompt UI/delegate. Preserve Chromium's origin/content-setting checks and Android runtime permission flow; do not add a second grant path. |
+| Navigation and security | Chromium navigation stack, `WebContents`, `NavigationHandle`, certificate/security UI | Add WAE policy at a verified browser-owned pre-commit navigation hook. `TabObserver` callbacks are useful for state observation but must not be mistaken for a cancellable request hook. Retain Chromium redirects, origin checks, certificate validation, and subresource security. |
+| Renderer failure | `TabObserver.onCrash` and Chromium tab/WebContents lifecycle | Reuse Chromium crash/recovery behavior and test that dead contents cannot be reused as live tabs. |
 
 ## Important API observations at the pinned revision
 
 - `TabModelSelector` exposes separate regular and off-the-record models, current-model suppliers, observer registration, and profile access.
 - `TabModel` exposes model observers, tab lookup, and a `TabRemover`; WAE tab UI should consume those events rather than own a parallel list.
 - The pinned `Tab` interface exposes `getWebContents()`, `getUrl()`, `getTitle()`, `getId()`, and explicit `isOffTheRecord()` / `isIncognitoBranded()` methods. Use off-the-record semantics for privacy; branding is not a privacy boundary.
+- The pinned `TabObserver` exposes title/URL updates, load progress, primary-main-frame navigation lifecycle notifications, and `onCrash`. These are state/lifecycle observations; they do not by themselves provide a synchronous pre-commit cancellation contract.
+- `NavigationHandle` exposes `isInPrimaryMainFrame()` and `hasUserGesture()`. Any WAE top-level navigation policy must be attached at an upstream hook that can actually cancel or redirect before commit; do not rely on post-start observer callbacks.
 - `Profile` exposes `getOrCreatePrimaryOtrProfile()` and `isOffTheRecord()`. The lifecycle of the OTR profile must remain under Chromium's profile manager.
 - The existing `DownloadManagerService.DownloadObserver` is marked deprecated after the new download backend. The implementation must identify and use the active download backend for this exact source revision.
+- The pinned permission pipeline includes `PermissionPromptAndroid` and `PermissionDialogDelegate`; the existing prompt is the integration seam to preserve, rather than exposing raw permission decisions to page content.
 
 ## First patch-series boundaries
 
