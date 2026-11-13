@@ -14,7 +14,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +21,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
@@ -34,21 +32,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.util.UUID
-
-private data class WorkspaceTab(
-    val id: String = UUID.randomUUID().toString(),
-    val title: String = "New tab",
-    val address: String = ""
-)
+import com.wae.browser.core.BrowserSessionController
 
 @Composable
 internal fun BrowserWorkspace() {
-    val tabs = remember { mutableStateListOf(WorkspaceTab()) }
-    var activeTabId by remember { mutableStateOf(tabs.first().id) }
-    var addressDraft by remember { mutableStateOf("") }
+    val sessionController = remember {
+        BrowserSessionController().apply { createTab() }
+    }
+    var session by remember { mutableStateOf(sessionController.snapshot()) }
+    val tabs = session.tabs
+    val activeTab = session.activeTab ?: tabs.first()
+    val activeTabId = activeTab.id
+    var addressDraft by remember { mutableStateOf(activeTab.pendingInput) }
     var selectedSection by remember { mutableStateOf("Home") }
-    val activeTab = tabs.firstOrNull { it.id == activeTabId } ?: tabs.first()
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -80,8 +76,9 @@ internal fun BrowserWorkspace() {
                     val selected = tab.id == activeTabId
                     Surface(
                         modifier = Modifier.clickable {
-                            activeTabId = tab.id
-                            addressDraft = tab.address
+                            sessionController.selectTab(tab.id)
+                            session = sessionController.snapshot()
+                            addressDraft = tab.pendingInput
                         },
                         shape = RoundedCornerShape(12.dp),
                         color = if (selected) MaterialTheme.colorScheme.surfaceVariant
@@ -97,20 +94,12 @@ internal fun BrowserWorkspace() {
                                 "×",
                                 color = MaterialTheme.colorScheme.secondary,
                                 modifier = Modifier.padding(start = 8.dp).clickable {
-                                    if (tabs.size > 1) {
-                                        val index = tabs.indexOfFirst { it.id == tab.id }
-                                        tabs.remove(tab)
-                                        if (activeTabId == tab.id) {
-                                            val next = tabs[index.coerceAtMost(tabs.lastIndex)]
-                                            activeTabId = next.id
-                                            addressDraft = next.address
-                                        }
-                                    } else {
-                                        val replacement = WorkspaceTab()
-                                        tabs[0] = replacement
-                                        activeTabId = replacement.id
-                                        addressDraft = ""
+                                    sessionController.closeTab(tab.id)
+                                    if (sessionController.snapshot().tabs.isEmpty()) {
+                                        sessionController.createTab()
                                     }
+                                    session = sessionController.snapshot()
+                                    addressDraft = session.activeTab?.pendingInput.orEmpty()
                                 },
                                 fontSize = 16.sp
                             )
@@ -118,10 +107,9 @@ internal fun BrowserWorkspace() {
                     }
                 }
                 OutlinedButton(onClick = {
-                    val tab = WorkspaceTab()
-                    tabs.add(tab)
-                    activeTabId = tab.id
-                    addressDraft = ""
+                    val tab = sessionController.createTab()
+                    session = sessionController.snapshot()
+                    addressDraft = tab.pendingInput
                     selectedSection = "Home"
                 }) { Text("+") }
             }
@@ -140,13 +128,8 @@ internal fun BrowserWorkspace() {
                         value = addressDraft,
                         onValueChange = {
                             addressDraft = it
-                            val index = tabs.indexOfFirst { tab -> tab.id == activeTabId }
-                            if (index >= 0) {
-                                tabs[index] = tabs[index].copy(
-                                    address = it,
-                                    title = if (it.isBlank()) "New tab" else it.take(24)
-                                )
-                            }
+                            sessionController.updatePendingInput(activeTab.id, it)
+                            session = sessionController.snapshot()
                         },
                         modifier = Modifier.weight(1f),
                         singleLine = true,
