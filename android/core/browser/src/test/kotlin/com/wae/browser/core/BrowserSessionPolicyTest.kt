@@ -147,6 +147,9 @@ class BrowserSessionPolicyTest {
             controller.restoreStandardTabs(listOf(standard), "unknown")
         }
         assertThrows(IllegalArgumentException::class.java) {
+            controller.restoreStandardTabs(listOf(standard.copy(currentUrl = "javascript:alert(1)")))
+        }
+        assertThrows(IllegalArgumentException::class.java) {
             controller.restoreStandardTabs((0..50).map { standard.copy(id = "tab-$it") })
         }
         assertEquals(listOf(existing), controller.snapshot().tabs)
