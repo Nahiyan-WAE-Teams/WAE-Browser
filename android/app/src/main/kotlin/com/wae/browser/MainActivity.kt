@@ -4,9 +4,16 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.lifecycleScope
 import com.wae.browser.core.BrowserSessionController
 import com.wae.browser.core.DataStoreBrowserBookmarkRepository
@@ -22,6 +29,7 @@ import kotlinx.coroutines.withContext
 class MainActivity : ComponentActivity() {
     private lateinit var sessionController: BrowserSessionController
     private lateinit var sessionPersistence: BrowserSessionPersistence
+    private lateinit var sessionRepository: DataStoreBrowserSessionRepository
     private var sessionReady = false
     private var sessionPersistenceAllowed = false
 
@@ -29,9 +37,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         sessionController = BrowserSessionController()
-        sessionPersistence = BrowserSessionPersistence(
-            BrowserSessionRepositoryProvider.get(applicationContext)
-        )
+        sessionRepository = BrowserSessionRepositoryProvider.get(applicationContext)
+        sessionPersistence = BrowserSessionPersistence(sessionRepository)
         val bookmarkRepository = BrowserBookmarkRepositoryProvider.get(applicationContext)
 
         lifecycleScope.launch {
@@ -47,12 +54,15 @@ class MainActivity : ComponentActivity() {
                 }
             }
             sessionPersistenceAllowed = restored
-            if (sessionController.snapshot().tabs.isEmpty()) {
-                sessionController.createTab()
+            if (restored) {
+                if (sessionController.snapshot().tabs.isEmpty()) {
+                    sessionController.createTab()
+                }
+                sessionReady = true
             }
-            sessionReady = true
 
             setContent {
+                var recoveryComplete by remember { mutableStateOf(restored) }
                 MaterialTheme(
                     colorScheme = darkColorScheme(
                         primary = Color(0xFFB5C8FF),
@@ -65,11 +75,46 @@ class MainActivity : ComponentActivity() {
                         onSurface = Color(0xFFE7ECF5)
                     )
                 ) {
-                    BrowserWorkspace(
-                        sessionController = sessionController,
-                        bookmarkRepository = bookmarkRepository,
-                        onSessionChanged = ::persistSession
-                    )
+                    if (!recoveryComplete) {
+                        AlertDialog(
+                            onDismissRequest = {},
+                            title = { Text("Saved session could not be opened") },
+                            text = {
+                                Text(
+                                    "The saved browser session is unreadable or uses an unsupported format. " +
+                                        "Its stored data has been preserved. Resetting will permanently " +
+                                        "discard that saved session and start with a new tab."
+                                )
+                            },
+                            confirmButton = {
+                                Button(onClick = {
+                                    lifecycleScope.launch {
+                                        try {
+                                            withContext(Dispatchers.IO) {
+                                                sessionRepository.clear()
+                                            }
+                                            sessionController.createTab()
+                                            sessionPersistenceAllowed = true
+                                            sessionReady = true
+                                            recoveryComplete = true
+                                        } catch (error: CancellationException) {
+                                            throw error
+                                        } catch (error: Exception) {
+                                            Log.e(TAG, "Could not reset the unreadable browser session", error)
+                                        }
+                                    }
+                                }) {
+                                    Text("Reset saved session")
+                                }
+                            }
+                        )
+                    } else {
+                        BrowserWorkspace(
+                            sessionController = sessionController,
+                            bookmarkRepository = bookmarkRepository,
+                            onSessionChanged = ::persistSession
+                        )
+                    }
                 }
             }
         }
