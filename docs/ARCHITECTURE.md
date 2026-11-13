@@ -77,7 +77,6 @@ WAE-Browser/
 | feature/extensions | User-facing extension management | Unrestricted engine privileges |
 | engine/api | Browser engine contracts and lifecycle boundary | Engine-specific implementation |
 | engine/chromium | Chromium adapter and native integration | Product UI and policy decisions |
-| engine/chromium | Chromium integration and lifecycle | Product UI |
 
 ## 4. Engine boundary
 
