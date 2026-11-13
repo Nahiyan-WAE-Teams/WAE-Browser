@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "WAE-Browser"
 include(":android:app")
+include(":android:engine:api")
