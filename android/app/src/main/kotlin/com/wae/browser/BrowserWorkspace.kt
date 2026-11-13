@@ -22,7 +22,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -36,10 +35,10 @@ import com.wae.browser.core.BrowserSessionController
 import com.wae.browser.core.BrowsingMode
 
 @Composable
-internal fun BrowserWorkspace() {
-    val sessionController = remember {
-        BrowserSessionController().apply { createTab() }
-    }
+internal fun BrowserWorkspace(
+    sessionController: BrowserSessionController,
+    onSessionChanged: () -> Unit
+) {
     var session by remember { mutableStateOf(sessionController.snapshot()) }
     val tabs = session.tabs
     val activeTab = session.activeTab ?: tabs.first()
@@ -78,6 +77,7 @@ internal fun BrowserWorkspace() {
                     Surface(
                         modifier = Modifier.clickable {
                             sessionController.selectTab(tab.id)
+                            onSessionChanged()
                             session = sessionController.snapshot()
                             addressDraft = tab.pendingInput
                         },
@@ -99,6 +99,7 @@ internal fun BrowserWorkspace() {
                                     if (sessionController.snapshot().tabs.isEmpty()) {
                                         sessionController.createTab()
                                     }
+                                    onSessionChanged()
                                     session = sessionController.snapshot()
                                     addressDraft = session.activeTab?.pendingInput.orEmpty()
                                 },
@@ -109,12 +110,14 @@ internal fun BrowserWorkspace() {
                 }
                 OutlinedButton(onClick = {
                     val tab = sessionController.createTab()
+                    onSessionChanged()
                     session = sessionController.snapshot()
                     addressDraft = tab.pendingInput
                     selectedSection = "Home"
                 }) { Text("+") }
                 OutlinedButton(onClick = {
                     val tab = sessionController.createTab(BrowsingMode.PRIVATE)
+                    onSessionChanged()
                     session = sessionController.snapshot()
                     addressDraft = tab.pendingInput
                     selectedSection = "Home"
