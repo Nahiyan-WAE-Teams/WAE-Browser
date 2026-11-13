@@ -6,6 +6,12 @@
 
 The source/security review record is maintained in [Chromium security baseline](../revisions/SECURITY_BASELINE.md). Review it before changing the source pin or creating a release build.
 
+Before authoring a Chromium-side adapter, run the read-only [pinned source audit helper](../build/inspect_pinned_sources.sh) against a full checkout at the exact locked revision. It reports tracked Java source paths, matching lifecycle/model/profile/download/permission declarations, relevant GN files, the checkout version, and branch commit-position metadata. It does not modify the Chromium checkout and does not replace code review or a build.
+
+```sh
+bash browser/build/inspect_pinned_sources.sh /path/to/chromium/src
+```
+
 This document defines the intended ownership boundary for the selected browser-fork approach. It is not a claim that a WAE adapter already exists. See [UI adaptation boundaries](UI_ADAPTATION.md) for the root Activity, toolbar, and tab-switcher integration rules, and [native tab-state bridge design](TAB_STATE_BRIDGE.md) for the observer contract, privacy invariants, lifecycle, and acceptance criteria.
 
 ## Runtime host and application identity
