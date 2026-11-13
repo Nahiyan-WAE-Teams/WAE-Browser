@@ -43,7 +43,7 @@ jobs:
       # it in the stable channel.
       - name: Install Android 17 preview compile SDK
         run: |
-          sdkmanager --channel=3 "platforms;android-37" "build-tools;37.0.0"
+          sdkmanager --channel=3 "platforms;android-37.0" "build-tools;37.0.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
