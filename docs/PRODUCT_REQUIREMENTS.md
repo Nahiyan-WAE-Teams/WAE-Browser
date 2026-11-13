@@ -2,6 +2,7 @@
 
 **Status:** Baseline specification  
 **Platform:** Android  
+**Minimum Android version:** Android 10 (API 29)  
 **Initial ABI:** ARM64
 
 ## 1. Product vision
@@ -18,6 +19,7 @@ Deliver a privacy-focused Android browser based on Chromium that remains useful 
 | Sync | Optional self-hosted server |
 | Sync privacy | Client-side encryption before network transfer |
 | Extensions | Local package installation plus supported external sources |
+| Minimum Android | Android 10 (API 29) |
 | Initial ABI | ARM64 |
 | Telemetry | No hidden telemetry |
 | Cloud dependency | None required for normal browsing |
@@ -77,6 +79,7 @@ Deliver a privacy-focused Android browser based on Chromium that remains useful 
 
 ## 5. Non-functional requirements
 
+- Android 10 (API 29) is the minimum supported OS. Runtime behavior and permissions must be tested on API 29 as well as a current Android release.
 - ARM64 is the first release target.
 - Keep Chromium revision and security patch level visible in diagnostics/about.
 - Pin all build-critical dependencies.
