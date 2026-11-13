@@ -52,6 +52,7 @@ class DataStoreBrowserBookmarkRepository(
             createdAtEpochMillis = now()
         )
         require(bookmark.id.isNotBlank() && bookmark.id.length <= MAX_ID_CHARS)
+        require(bookmark.createdAtEpochMillis >= 0)
 
         var savedBookmark = bookmark
         dataStore.edit { preferences ->
@@ -64,6 +65,7 @@ class DataStoreBrowserBookmarkRepository(
                 }
             } else {
                 require(current.size < MAX_BOOKMARKS) { "Bookmark limit reached" }
+                require(current.none { it.id == bookmark.id }) { "Generated bookmark ID already exists" }
                 current + bookmark
             }
             val encoded = encode(updated)
@@ -89,6 +91,7 @@ class DataStoreBrowserBookmarkRepository(
         bookmarks.forEach { bookmark ->
             require(bookmark.id.isNotBlank() && bookmark.id.length <= MAX_ID_CHARS)
             require(bookmark.title.length <= MAX_TITLE_CHARS)
+            require(bookmark.createdAtEpochMillis >= 0)
             require(bookmark.url.length <= MAX_URL_CHARS)
             require(normalizeWebUrl(bookmark.url) == bookmark.url)
             array.put(
@@ -117,6 +120,7 @@ class DataStoreBrowserBookmarkRepository(
             )
             require(bookmark.id.isNotBlank() && bookmark.id.length <= MAX_ID_CHARS)
             require(bookmark.title.length <= MAX_TITLE_CHARS)
+            require(bookmark.createdAtEpochMillis >= 0)
             require(normalizeWebUrl(bookmark.url) == bookmark.url)
             result += bookmark
         }
