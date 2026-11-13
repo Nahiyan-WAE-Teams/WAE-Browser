@@ -220,12 +220,13 @@ class BrowserSessionController(
     }
 
     @Synchronized
-    fun restoreStandardTabs(restored: List<BrowserTab>) {
+    fun restoreStandardTabs(restored: List<BrowserTab>, preferredActiveId: String? = null) {
         tabs.clear()
         restored.filter { it.mode == BrowsingMode.STANDARD }
             .distinctBy { it.id }
             .forEach { tabs += it.copy(isLoading = false, progress = 0) }
-        activeId = tabs.firstOrNull()?.id
+        activeId = tabs.firstOrNull { it.id == preferredActiveId }?.id
+            ?: tabs.firstOrNull()?.id
     }
 
     private fun update(id: String, transform: (BrowserTab) -> BrowserTab): Boolean {
