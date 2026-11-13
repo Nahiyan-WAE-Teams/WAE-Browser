@@ -24,7 +24,9 @@ data class PersistedBrowserSession(
 
     companion object {
         fun from(session: BrowserSession): PersistedBrowserSession {
-            val standardTabs = session.persistableTabs()
+            val standardTabs = session.persistableTabs().map { tab ->
+                tab.copy(pendingInput = tab.currentUrl.orEmpty())
+            }
             val activeId = session.activeTabId
                 ?.takeIf { id -> standardTabs.any { it.id == id } }
             return PersistedBrowserSession(standardTabs, activeId)
