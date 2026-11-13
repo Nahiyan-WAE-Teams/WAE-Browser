@@ -15,15 +15,31 @@ interface BrowserEngine : AutoCloseable {
     val info: BrowserEngineInfo
 
     /**
-     * Creates an independent tab. Private tabs must not persist history,
-     * cookies, cache, or other private browsing state beyond their lifetime.
+     * Creates an independent browser profile. A private profile is an
+     * off-the-record session: it must not write browsing data to durable
+     * storage and must destroy its in-memory state when closed.
      */
-    fun createTab(context: Context, privateMode: Boolean = false): BrowserTab
+    fun createProfile(context: Context, mode: BrowserProfileMode): BrowserProfile
 
     override fun close()
 }
 
-/** A single top-level browsing context owned by the engine. */
+enum class BrowserProfileMode { STANDARD, PRIVATE }
+
+/**
+ * A profile owns cookies, cache, storage partitions, permissions context,
+ * and tabs. Multiple private tabs may share one private profile; closing
+ * that profile closes all its tabs and discards its ephemeral data.
+ */
+interface BrowserProfile : AutoCloseable {
+    val mode: BrowserProfileMode
+
+    fun createTab(): BrowserTab
+
+    override fun close()
+}
+
+/** A single top-level browsing context owned by a profile. */
 interface BrowserTab : AutoCloseable {
     val id: String
     val view: View
@@ -45,10 +61,38 @@ interface BrowserTabObserver {
     fun onStateChanged(state: BrowserTabState)
 
     /**
+     * Synchronous main-frame gate. The engine must apply the returned
+     * decision before committing the navigation, including redirects.
+     * Renderer-originated requests must never be allowed to grant privileges.
+     */
+    fun onNavigationRequested(request: BrowserNavigationRequest): BrowserNavigationDecision
+
+    /**
      * Requests are paired with a handler so UI/policy code, not renderer
      * content, decides permissions and file selection.
      */
     fun onEvent(event: BrowserTabEvent, requestHandler: BrowserTabRequestHandler)
+}
+
+data class BrowserNavigationRequest(
+    val uri: Uri,
+    val isMainFrame: Boolean,
+    val source: BrowserNavigationSource,
+    val hasUserGesture: Boolean
+)
+
+enum class BrowserNavigationSource {
+    ADDRESS_BAR,
+    LINK,
+    REDIRECT,
+    SCRIPT,
+    RESTORE
+}
+
+sealed interface BrowserNavigationDecision {
+    data class Allow(val uri: Uri) : BrowserNavigationDecision
+    data class OpenExternal(val uri: Uri) : BrowserNavigationDecision
+    data class Block(val reason: String) : BrowserNavigationDecision
 }
 
 sealed interface BrowserTabEvent {
