@@ -3,6 +3,7 @@ package com.wae.browser.core
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class BrowserSessionPolicyTest {
@@ -75,7 +76,7 @@ class BrowserSessionPolicyTest {
         val persisted = PersistedBrowserSession.from(controller.snapshot())
 
         assertEquals(listOf(standard.id), persisted.tabs.map { it.id })
-        assertEquals(standard.id, persisted.activeTabId)
+        assertNull(persisted.activeTabId)
         assertTrue(persisted.tabs.all { it.mode == BrowsingMode.STANDARD })
     }
 
