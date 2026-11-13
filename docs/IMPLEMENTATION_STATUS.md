@@ -13,7 +13,8 @@ This document distinguishes committed source work from functionality that is not
 - Address drafts are kept per tab; entering text does not initiate network navigation.
 - Application-facing browser engine contracts for standard/private profile lifecycle, tab lifecycle, navigation commands and interception, state observation, download requests, site permission requests, file chooser requests, and renderer crashes.
 - Chromium POC source revision and ARM64 build notes.
-- Engine-independent browser session controller with standard/private tab modes and standard-tab-only persistence projection.\n- Durable session repository contract that structurally excludes private tabs and preserves the selected standard tab; no concrete database adapter is wired yet.
+- Engine-independent browser session controller with standard/private tab modes and standard-tab-only persistence projection.
+- Durable session repository contract that structurally excludes private tabs and preserves the selected standard tab; no concrete database adapter is wired yet.
 - Address-bar resolver for HTTP(S) destinations and configurable search providers.
 - Central top-level navigation policy and coordinator; unsupported schemes are rejected and external mail/tel actions require a direct user gesture.
 
