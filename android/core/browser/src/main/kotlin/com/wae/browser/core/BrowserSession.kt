@@ -86,9 +86,13 @@ class AddressBarResolver(
 
         val hostLike = looksLikeHost(input)
         val explicitScheme = SCHEME_PATTERN.containsMatchIn(input)
+        // A scheme must take precedence over host detection. Otherwise inputs
+        // such as "ftp://example.com" or "https://example.com:0" can be
+        // misclassified as a hostname because URI("https://$input") still
+        // exposes the leading scheme text as a host.
         val candidate = when {
-            hostLike -> "https://$input"
             explicitScheme -> input
+            hostLike -> "https://$input"
             else -> return search(input)
         }
 
