@@ -16,12 +16,13 @@ This document distinguishes committed source work from functionality that is not
 - Engine-independent browser session controller with standard/private tab modes and standard-tab-only persistence projection.
 - Durable session repository contract plus a concrete AndroidX DataStore 1.3.0 adapter. The Activity restores on startup and saves tab changes/onStop on an IO dispatcher; writes are serialized through a process-wide mutex. Private-mode domain tabs, unsent address drafts, and transient loading/security state are excluded. This does not yet establish Chromium OTR profile isolation. A single process-wide DataStore instance is reused.
 - Address-bar resolver for HTTP(S) destinations and configurable search providers.
+- Bounded, device-local bookmark storage using a dedicated DataStore file, with add/update, list, and remove operations; HTTP(S)-only URL validation, duplicate URL handling, 500-item and payload-size limits, and a Compose bookmark management surface. Selecting a bookmark copies its URL into the address field; it does not navigate until a real engine is connected.
 - Central top-level navigation policy and coordinator; unsupported schemes are rejected and external mail/tel actions require a direct user gesture.
 
 ## Not implemented yet
 
 - A Chromium source checkout/build, validated WAE app-name/launcher icon branding, actual toolbar/tab-switcher UI patches, and WAE-specific Chromium runtime integration.
-- Real network navigation/search execution, engine-enforced navigation interception, browser history, and bookmarks.
+- Real network navigation/search execution, engine-enforced navigation interception, and browser history.
 - Production download execution, offline snapshots, extension runtime, privacy/network enforcement, or sync.
 - Release signing and production packaging.
 
