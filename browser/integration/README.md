@@ -25,7 +25,7 @@ The standalone Compose `MainActivity` is not the eventual Chromium host. The WAE
 | Standard/private tab models | `TabModelSelector`, `TabModel`, `Tab`, `TabObserver` | Use Chromium's tab models; do not mirror them as a second authoritative tab store. |
 | Profiles and private isolation | `Profile`, `ProfileManager`, `OtrProfileId` | Use regular and off-the-record profiles. A private tab must use an OTR profile and must not be restored or serialized. |
 | Page contents and rendering | `Tab.getWebContents()`, `WebContents`, Chromium compositor/view ownership | Keep WebContents attached through Chromium's tab/view lifecycle. Do not create a second renderer host. |
-| Downloads | Chromium download backend and browser download UI | Inspect the pinned backend before adapting. The older `DownloadManagerService.DownloadObserver` API is explicitly marked deprecated in this revision; do not make it the new WAE integration contract. |
+| Downloads | `chrome/browser/download/android` Java library: `DownloadManagerBridge`, `DownloadDelegateImpl`, `DownloadManagerCoordinator`, `DownloadToolbarButtonController`, and Chromium download-item/backend services | Adapt Chromium's download-item lifecycle and existing Android DownloadManager bridge. Preserve dangerous/insecure download dialogs, file-provider URI handling, MIME validation, and user confirmation. Do not create a second network download stack or use the deprecated `DownloadManagerService.DownloadObserver` API as the WAE contract. |
 | Site permissions | `components/permissions/android/permission_prompt/PermissionPromptAndroid` and `PermissionDialogDelegate` | Adapt the existing prompt UI/delegate. Preserve Chromium's origin/content-setting checks and Android runtime permission flow; do not add a second grant path. |
 | Navigation and security | Chromium navigation stack, `WebContents`, `NavigationHandle`, certificate/security UI | Add WAE policy at a verified browser-owned pre-commit navigation hook. `TabObserver` callbacks are useful for state observation but must not be mistaken for a cancellable request hook. Retain Chromium redirects, origin checks, certificate validation, and subresource security. |
 | Renderer failure | `TabObserver.onCrash` and Chromium tab/WebContents lifecycle | Reuse Chromium crash/recovery behavior and test that dead contents cannot be reused as live tabs. |
@@ -63,3 +63,25 @@ Every patch must be based on the locked Chromium SHA, have a stable patch ID, in
 - [Profile](https://github.com/chromium/chromium/blob/81ff2496eed313447d34079a6f45c57f9c5611c1/chrome/browser/profiles/android/java/src/org/chromium/chrome/browser/profiles/Profile.java)
 - [DownloadManagerService](https://github.com/chromium/chromium/blob/81ff2496eed313447d34079a6f45c57f9c5611c1/chrome/android/java/src/org/chromium/chrome/browser/download/DownloadManagerService.java)
 - [Chrome Android sandbox design](https://chromium.googlesource.com/chromium/src/+/HEAD/docs/security/android-sandbox.md)
+
+## Extension feasibility on Android phones
+
+The pinned source does **not** enable the full desktop extensions platform for a normal Android phone build by default. This is a concrete compatibility gate, not just a UI task:
+
+- `extensions/buildflags/buildflags.gni` sets `enable_extensions = !is_android && ...`, so it defaults to false on Android.
+- `enable_desktop_android_extensions` defaults to `is_desktop_android`; `build/config/chrome_build.gni` defaults `is_desktop_android` to false.
+- `enable_extensions_core` defaults to `enable_extensions || enable_desktop_android_extensions`, so it is also false for the current ARM64 phone target.
+- The same buildflags file explains that `enable_extensions_core` contains the majority of extension code ported to Android, while code still gated by `enable_extensions` is not yet ported or is explicitly excluded from desktop Android.
+
+Therefore, adding `enable_extensions_core=true` or enabling the desktop-Android flag is not proof of full Manifest V3 compatibility. Do not force either flag in the production GN args until the exact pinned source has been audited for extension loading/unpacking, MV3 service-worker lifecycle, permissions/host access, content scripts, storage, declarativeNetRequest, action UI, background events, incognito behavior, and update/uninstall paths. The target must build and pass Android 10 and current-device regression coverage with Chromium security boundaries intact.
+
+Primary pinned-source references:
+- [Extension buildflags](https://github.com/chromium/chromium/blob/81ff2496eed313447d34079a6f45c57f9c5611c1/extensions/buildflags/buildflags.gni)
+- [Desktop Android build defaults](https://github.com/chromium/chromium/blob/81ff2496eed313447d34079a6f45c57f9c5611c1/build/config/chrome_build.gni)
+- [Chrome extensions build graph](https://github.com/chromium/chromium/blob/81ff2496eed313447d34079a6f45c57f9c5611c1/chrome/browser/extensions/BUILD.gn)
+
+## Android download integration at the pinned revision
+
+The pinned `chrome/browser/download/android/BUILD.gn` includes Chromium-owned `DownloadManagerBridge`, `DownloadDelegateImpl`, `DownloadManagerCoordinator`, `DownloadToolbarButtonController`, download dialogs, and file-provider components. WAE should adapt these browser-owned services and the active download-item backend rather than implement a parallel HTTP downloader. Preserve Chromium's dangerous/insecure download warnings and Android DownloadManager URI/file handling.
+
+- [Pinned Android download build graph](https://github.com/chromium/chromium/blob/81ff2496eed313447d34079a6f45c57f9c5611c1/chrome/browser/download/android/BUILD.gn)
