@@ -12,7 +12,7 @@ This document distinguishes committed source work from functionality that is not
 - Compose prototype tab strip is connected to the engine-independent session controller: create, select, close, and reset tabs. Standard/private are currently domain labels only; actual Chromium regular/OTR profile isolation is not implemented.
 - Address drafts are kept per tab; entering text does not initiate network navigation.
 - Application-facing browser engine contracts for standard/private profile lifecycle, tab lifecycle, navigation commands and interception, state observation, download requests, site permission requests, file chooser requests, and renderer crashes.
-- Chromium POC source revision, baseline ARM64 GN args, WAE package-namespace GN args, a pinned-source integration map, an initial WAE app-name patch, and a revision-guarded patch application script (not yet run).
+- Chromium POC source revision, baseline ARM64 GN args, WAE package-namespace GN args, a pinned-source integration map, an initial WAE app-name/widget-label patch, and a revision-guarded patch application script (not yet run).
 - Engine-independent browser session controller with standard/private tab modes and standard-tab-only persistence projection.
 - Durable session repository contract plus a concrete AndroidX DataStore 1.3.0 adapter. The Activity restores on startup and saves tab changes/onStop on an IO dispatcher; private-mode domain tabs, unsent address drafts, and transient loading/security state are excluded. This does not yet establish Chromium OTR profile isolation. A single process-wide DataStore instance is reused.
 - Address-bar resolver for HTTP(S) destinations and configurable search providers.
