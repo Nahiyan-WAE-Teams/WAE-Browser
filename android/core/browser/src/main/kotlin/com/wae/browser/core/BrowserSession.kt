@@ -148,7 +148,7 @@ class BrowserSessionController(
         val tab = BrowserTab(
             id = newId(),
             mode = mode,
-            title = "New tab",
+            title = if (mode == BrowsingMode.PRIVATE) "Private tab" else "New tab",
             currentUrl = null,
             pendingInput = "",
             createdAtEpochMillis = now()
