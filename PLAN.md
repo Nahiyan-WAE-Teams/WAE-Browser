@@ -25,7 +25,7 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 - [x] Add engine-independent session models, standard/private tab modes, and safe HTTP(S)/search address resolution, rejecting port zero/invalid ports and bounding address input.
 - [x] Define a persistence boundary that excludes private tabs and retains the active standard tab.
 - [x] Implement a bounded DataStore persistence adapter; restore and save standard tabs through activity lifecycle callbacks, excluding private tabs and unsent address drafts.
-- [x] Implement bounded local bookmark persistence and a bookmark management surface with HTTP(S)-only validation, duplicate URL updates, unique bounded IDs, non-negative timestamps, valid destination ports, and remove support (navigation remains pending Chromium integration).
+- [x] Implement bounded local bookmark persistence and a bookmark management surface with HTTP(S)-only validation, duplicate URL updates, unique bounded IDs, non-negative timestamps, valid destination ports, title control/bidirectional-character normalization, and remove support (navigation remains pending Chromium integration).
 - [ ] Connect persisted session state to real engine navigation.
 - [ ] Complete navigation controls and settings.
 - [ ] Establish design tokens, typography, accessibility, responsive layouts, and restrained motion.
