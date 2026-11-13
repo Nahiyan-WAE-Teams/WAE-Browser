@@ -65,16 +65,12 @@ After the unmodified baseline is reviewed, apply the WAE patch series to a clean
 ```sh
 WAE_REPO=/path/to/WAE-Browser
 bash "$WAE_REPO/browser/build/apply_wae_patches.sh" "$HOME/wae-chromium/src"
+
+gn gen out/WAEBrand --args="$(cat "$WAE_REPO/browser/build/args/wae-arm64.gn")"
+autoninja -C out/WAEBrand chrome_public_apk
 ```
 
 The script reads the expected source SHA from `browser/revisions/chromium.lock`, refuses a mismatched or dirty Chromium checkout, checks each patch before applying it, and runs `git diff --check`.
-
-Then generate a separate WAE package-namespace output directory:
-
-```sh
-gn gen out/WAEBrand --args='target_os="android" target_cpu="arm64" chrome_public_manifest_package="com.wae.browser"'
-autoninja -C out/WAEBrand chrome_public_apk
-```
 
 The GN arg `chrome_public_manifest_package` is declared by Chromium's `chrome/android/chrome_public_apk_tmpl.gni` and changes the Android application package namespace. Patch `0001` changes the manifest's `app_name` resource to WAE Browser. Neither change replaces Chromium launcher icons, remaining product strings, or Chrome's browser UI.
 
