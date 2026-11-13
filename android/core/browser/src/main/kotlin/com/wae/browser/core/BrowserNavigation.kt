@@ -105,8 +105,11 @@ class BrowserNavigationCoordinator(
             )
         ) {
             is NavigationDecision.Load -> {
-                sessions.commitNavigation(tabId, decision.uri.toASCIIString())
-                AddressSubmission.Navigate(tabId, decision.uri)
+                if (!sessions.commitNavigation(tabId, decision.uri.toASCIIString())) {
+                    AddressSubmission.Rejected("The selected tab was closed before navigation could start")
+                } else {
+                    AddressSubmission.Navigate(tabId, decision.uri)
+                }
             }
             is NavigationDecision.OpenExternal ->
                 AddressSubmission.Rejected("External destinations must be handed to the platform")
