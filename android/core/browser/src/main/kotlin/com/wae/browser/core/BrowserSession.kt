@@ -26,6 +26,8 @@ data class BrowserTab(
         require(id.isNotBlank() && id.length <= 128)
         require(progress in 0..100)
         require(title.length <= 512)
+        require(currentUrl == null || currentUrl.length <= 8_192)
+        require(pendingInput.length <= 8_192)
         require(createdAtEpochMillis >= 0)
     }
 }
@@ -183,12 +185,15 @@ class BrowserSessionController(
     }
 
     @Synchronized
-    fun updatePendingInput(id: String, value: String): Boolean =
-        update(id) { it.copy(pendingInput = value) }
+    fun updatePendingInput(id: String, value: String): Boolean {
+        if (value.length > MAX_ADDRESS_CHARS) return false
+        return update(id) { it.copy(pendingInput = value) }
+    }
 
     @Synchronized
-    fun commitNavigation(id: String, url: String): Boolean =
-        update(id) {
+    fun commitNavigation(id: String, url: String): Boolean {
+        if (url.length > MAX_ADDRESS_CHARS) return false
+        return update(id) {
             it.copy(
                 currentUrl = url,
                 pendingInput = url,
@@ -200,6 +205,7 @@ class BrowserSessionController(
                 security = NavigationSecurity.UNKNOWN
             )
         }
+    }
 
     @Synchronized
     fun updatePageState(
@@ -232,6 +238,10 @@ class BrowserSessionController(
             .forEach { tabs += it.copy(isLoading = false, progress = 0) }
         activeId = tabs.firstOrNull { it.id == preferredActiveId }?.id
             ?: tabs.firstOrNull()?.id
+    }
+
+    private companion object {
+        const val MAX_ADDRESS_CHARS = 8_192
     }
 
     private fun update(id: String, transform: (BrowserTab) -> BrowserTab): Boolean {
