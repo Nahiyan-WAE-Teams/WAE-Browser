@@ -25,6 +25,7 @@ Active implementation branch: [feat/android-foundation](https://github.com/Nahiy
 - [Threat model](docs/THREAT_MODEL.md)
 - [Module architecture](docs/ARCHITECTURE.md)
 - [Verified Android toolchain baseline](docs/TOOLCHAIN.md)
+- [Chromium integration investigation](docs/CHROMIUM_INTEGRATION.md)
 - [Chromium security maintenance](docs/CHROMIUM_MAINTENANCE.md)
 - [Implementation plan](PLAN.md)
 
