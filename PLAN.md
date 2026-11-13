@@ -22,10 +22,10 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 - [x] Create the initial Android application module and Compose baseline.
 - [x] Add the Gradle Wrapper and split out the engine API contract module (actual Android build validation still pending).
 - [x] Implement initial browser workspace, local tab model, and per-tab address drafts.
-- [x] Add engine-independent session models, standard/private tab modes, and safe HTTP(S)/search address resolution.
+- [x] Add engine-independent session models, standard/private tab modes, and safe HTTP(S)/search address resolution, rejecting port zero and invalid destination ports.
 - [x] Define a persistence boundary that excludes private tabs and retains the active standard tab.
 - [x] Implement a bounded DataStore persistence adapter; restore and save standard tabs through activity lifecycle callbacks, excluding private tabs and unsent address drafts.
-- [x] Implement bounded local bookmark persistence and a bookmark management surface with HTTP(S)-only validation, duplicate URL updates, and remove support (navigation remains pending Chromium integration).
+- [x] Implement bounded local bookmark persistence and a bookmark management surface with HTTP(S)-only validation, duplicate URL updates, unique IDs, non-negative timestamps, valid destination ports, and remove support (navigation remains pending Chromium integration).
 - [ ] Connect persisted session state to real engine navigation.
 - [ ] Complete navigation controls and settings.
 - [ ] Establish design tokens, typography, accessibility, responsive layouts, and restrained motion.
@@ -63,7 +63,8 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 
 ## Phase 4 — Downloads and offline
 
-- [x] Specify Chromium-owned Android download integration, active backend ownership, OTR privacy, safe URI handling, and acceptance criteria (adapter/UI implementation remains pending).\n- [ ] Adapt Chromium's pinned Android download-item backend, `DownloadManagerBridge`, and download UI; preserve Chromium warning/confirmation and file-provider flows.
+- [x] Specify Chromium-owned Android download integration, active backend ownership, OTR privacy, safe URI handling, and acceptance criteria (adapter/UI implementation remains pending).
+- [ ] Adapt Chromium's pinned Android download-item backend, `DownloadManagerBridge`, and download UI; preserve Chromium warning/confirmation and file-provider flows.
 - [ ] Add WAE queue presentation and user controls (pause/resume/retry only where the pinned backend supports them); do not create a parallel network downloader.
 - [ ] Verify downloaded content with hashes where applicable and validate MIME/signature consistency.
 - [ ] Warn on executable or suspicious content; never auto-open downloads.
