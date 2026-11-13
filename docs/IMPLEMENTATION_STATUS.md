@@ -19,7 +19,7 @@ This document distinguishes committed source work from functionality that is not
 - Address-bar resolver for HTTP(S) destinations and configurable search providers; explicit destination-port validation rejects port zero and values outside the valid TCP/UDP port range; address input and top-level navigation URLs are bounded to 8,192 characters.
 - Bounded, device-local bookmark storage using a dedicated DataStore file, with add/update, list, and remove operations; HTTP(S)-only URL validation, duplicate URL handling, unique bounded IDs, non-negative creation timestamps, valid destination-port checks, rejection of control characters in persisted IDs/titles, and removal of invisible control/bidirectional override characters from user-entered bookmark titles, safe-ID validation on removal, and cancellation-preserving error handling for reads, plus 500-item and payload-size limits. Bookmark policy tests are authored but not executed. Selecting a bookmark copies its URL into the address field; it does not navigate until a real engine is connected.
 - Central top-level navigation policy and coordinator; unsupported top-level schemes are rejected and external mail/tel actions require a direct user gesture. Subframe navigation is deliberately delegated to Chromium's own origin/renderer policy.
-- JVM unit test source covering HTTP(S)-only address resolution, invalid ports and URL lengths, top-level versus subframe policy boundaries, private-tab persistence projection, restore validation and state preservation, draft stripping, bounded per-tab input, HTTP(S)-only navigation commits, and gesture-gated external actions (rejecting unsafe HTTP destinations); test code is authored but has not been executed.
+- JVM unit tests covering HTTP(S)-only address resolution, invalid ports and URL lengths, top-level versus subframe policy boundaries, private-tab persistence projection, restore validation and state preservation, draft stripping, bounded per-tab input, HTTP(S)-only navigation commits, and gesture-gated external actions (rejecting unsafe HTTP destinations). These tests passed in GitHub Actions run [#7](https://github.com/Nahiyan-WAE-Teams/WAE-Browser/actions/runs/43390773660).
 
 ## Not implemented yet
 
@@ -32,7 +32,11 @@ The Compose Activity is a prototype for product/domain behavior, not the final C
 
 ## Verification
 
-No Android build, emulator run, device run, or CI workflow has been executed for this branch. The current environment lacks the Android SDK and configured JDK 17 toolchain. These checks remain deferred under the repository's implementation-first policy. The recovery changes are source-reviewed only; they have not been compiled or exercised against DataStore.
+- GitHub Actions run [#7](https://github.com/Nahiyan-WAE-Teams/WAE-Browser/actions/runs/43390773660), commit `a1edb0a727096f88aa59e92589da6333c68e29c5`: **passed** on 2026-11-13.
+- `:android:core:browser:testDebugUnitTest`: passed.
+- `:android:app:assembleDebug`: passed; Gradle reported `BUILD SUCCESSFUL`.
+- This validates JVM unit tests and debug APK assembly only. No emulator/device execution, Chromium source checkout/build, runtime browser navigation, or Chromium adapter integration has been verified.
+- The workflow now uploads the debug APK as a 14-day artifact on successful runs; this artifact-upload change is pending its own CI verification.
 
 ## Next implementation sequence
 
