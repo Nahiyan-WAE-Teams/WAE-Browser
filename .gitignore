@@ -26,3 +26,13 @@ signing.properties
 # OS/editor noise
 .DS_Store
 Thumbs.db
+
+# Chromium source checkout and generated output
+/browser/src/
+/browser/out/
+/browser/.gclient
+/out/
+
+# Keep the versioned Chromium build instructions and GN args.
+!/browser/build/
+!/browser/build/**
