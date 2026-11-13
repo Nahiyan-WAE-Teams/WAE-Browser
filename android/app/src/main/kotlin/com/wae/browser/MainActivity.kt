@@ -23,6 +23,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var sessionController: BrowserSessionController
     private lateinit var sessionPersistence: BrowserSessionPersistence
     private var sessionReady = false
+    private var sessionPersistenceAllowed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,15 +35,18 @@ class MainActivity : ComponentActivity() {
         val bookmarkRepository = BrowserBookmarkRepositoryProvider.get(applicationContext)
 
         lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
+            val restored = withContext(Dispatchers.IO) {
                 try {
                     sessionPersistence.restoreInto(sessionController)
+                    true
                 } catch (error: CancellationException) {
                     throw error
                 } catch (error: Exception) {
-                    Log.e(TAG, "Could not restore browser session", error)
+                    Log.e(TAG, "Could not restore browser session; preserving stored data", error)
+                    false
                 }
             }
+            sessionPersistenceAllowed = restored
             if (sessionController.snapshot().tabs.isEmpty()) {
                 sessionController.createTab()
             }
@@ -79,6 +83,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun persistSession() {
+        if (!sessionPersistenceAllowed) return
         BrowserSessionRepositoryProvider.persist(sessionPersistence, sessionController)
     }
 
