@@ -91,7 +91,7 @@ Do not treat a demo or package rename as proof of a secure browser. Validate the
 4. Can it build reproducibly for ARM64 and install on Android 10?
 5. Can the integration be updated on the two-week Chromium release cadence without unreviewable patch drift?
 
-The first POC is now staged: first build the unmodified pinned ARM64 `chrome_public_apk`, then build a separate package-namespace variant with `chrome_public_manifest_package="com.wae.browser"`. Only after those are reproducible should the first UI/branding patch be authored. A full Chrome APK or package-renamed APK is not by itself a WAE Browser release.
+The first POC is staged: first build the unmodified pinned ARM64 `chrome_public_apk`, then apply the authored app-name patch and build a separate package-namespace variant with `chrome_public_manifest_package="com.wae.browser"`. Broader launcher-icon and browser-UI patches follow only after that baseline is reproducible. A full Chrome APK or package-renamed APK is not by itself a WAE Browser release.
 
 ## 6. Immediate implementation sequence
 
