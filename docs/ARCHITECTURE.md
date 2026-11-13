@@ -1,6 +1,6 @@
 # WAE Browser — Module Architecture
 
-**Status:** Android app shell and initial engine API contract module exist; concrete Chromium adapter is not implemented.  
+**Status:** Compose prototype and initial engine contract exist; Chromium browser-fork runtime integration is not implemented.  
 **Minimum Android version:** Android 10 (API 29).  
 **Initial ABI:** ARM64.
 
@@ -76,7 +76,6 @@ WAE-Browser/
 | core/design-system | UI tokens and reusable components | Browser state |
 | feature/browser | Tabs and browsing UI state | Direct Chromium internals |
 | feature/extensions | User-facing extension management | Unrestricted engine privileges |
-| engine/api | Browser engine contracts and lifecycle boundary | Engine-specific implementation |
 | engine/api | Prototype engine contract only; not a Chromium embedding SDK | Claiming to host the full browser APK |
 
 ## 4. Chromium runtime boundary
