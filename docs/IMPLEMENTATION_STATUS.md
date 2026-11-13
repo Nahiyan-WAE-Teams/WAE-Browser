@@ -9,18 +9,18 @@ This document distinguishes committed source work from functionality that is not
 
 - Android application module targeting API 36 with a minimum API of 29.
 - Compose-based dark browser workspace.
-- Compose tab strip is connected to the engine-independent browser session controller: create, select, close, and reset tabs.
+- Compose tab strip is connected to the engine-independent browser session controller: create, select, close, and reset tabs; standard and private tabs can be created separately.
 - Address drafts are kept per tab; entering text does not initiate network navigation.
 - Application-facing browser engine contracts for standard/private profile lifecycle, tab lifecycle, navigation commands and interception, state observation, download requests, site permission requests, file chooser requests, and renderer crashes.
 - Chromium POC source revision and ARM64 build notes.
-- Engine-independent browser session controller with standard/private tab modes and standard-tab-only persistence projection.
+- Engine-independent browser session controller with standard/private tab modes and standard-tab-only persistence projection.\n- Durable session repository contract that structurally excludes private tabs and preserves the selected standard tab; no concrete database adapter is wired yet.
 - Address-bar resolver for HTTP(S) destinations and configurable search providers.
 - Central top-level navigation policy and coordinator; unsupported schemes are rejected and external mail/tel actions require a direct user gesture.
 
 ## Not implemented yet
 
 - A concrete Chromium engine adapter and rendered web content.
-- Real network navigation/search execution, engine-enforced navigation interception, browser history, bookmarks, and persistent tab sessions.
+- Real network navigation/search execution, engine-enforced navigation interception, browser history, bookmarks, and concrete persistent tab storage.
 - Production download execution, offline snapshots, extension runtime, privacy/network enforcement, or sync.
 - Release signing and production packaging.
 
