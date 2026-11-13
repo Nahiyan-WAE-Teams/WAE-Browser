@@ -78,10 +78,11 @@ class AddressBarResolver(
             return NavigationTarget.Rejected("Address contains control characters")
         }
 
+        val hostLike = looksLikeHost(input)
         val explicitScheme = SCHEME_PATTERN.containsMatchIn(input)
         val candidate = when {
+            hostLike -> "https://$input"
             explicitScheme -> input
-            looksLikeHost(input) -> "https://$input"
             else -> return search(input)
         }
 
