@@ -88,7 +88,7 @@ The `:android:core:browser` module owns engine-independent tab/session state, ad
 - Request site permissions through a policy broker.
 - Expose only the extension hooks that the pinned Chromium integration actually supports.
 
-Do not assume Android WebView APIs are equivalent to Chromium's full browser embedding surface. The integration strategy must be validated against the chosen Chromium revision before committing to implementation. The current API module is a contract only; no fake or WebView-backed implementation is permitted.
+Do not assume Android WebView APIs are equivalent to Chromium's full browser embedding surface. The provisional integration decision is recorded in [ADR-0001](decisions/ADR-0001-chromium-android-integration.md): adapt Chromium's Android browser application layer unless a pinned-revision proof-of-concept demonstrates a safer, lower-maintenance Content embedder. The current API module is a contract only; no fake or WebView-backed implementation is permitted.
 
 ## 5. Android compatibility
 
