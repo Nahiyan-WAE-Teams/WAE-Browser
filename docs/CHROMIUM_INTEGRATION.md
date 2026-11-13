@@ -98,7 +98,8 @@ The first POC is now staged: first build the unmodified pinned ARM64 `chrome_pub
 1. Build the unmodified pinned Chromium ARM64 Android browser target on a suitable Linux host.
 2. Build the separate `com.wae.browser` package-namespace variant using `browser/build/args/wae-arm64.gn`.
 3. Map the Chromium Activity, tab model, profile, permission, download, and renderer lifecycle seams at the exact source revision.
-4. Implement WAE browser controls and product UI as a small, reviewed patch series inside Chromium's Android application; do not attempt to embed the full browser in the standalone Compose Activity.
-5. Record the exact source SHA, build arguments, patch hashes, third-party notices, and update/rebase procedure.
+4. Apply the app-name patch and verify the generated APK metadata/launcher label.
+5. Implement WAE browser controls and product UI as a small, reviewed patch series inside Chromium's Android application; do not attempt to embed the full browser in the standalone Compose Activity.
+6. Record the exact source SHA, build arguments, patch hashes, third-party notices, and update/rebase procedure.
 
 No Chromium source has been vendored or built in this repository yet.
