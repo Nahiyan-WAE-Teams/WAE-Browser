@@ -74,6 +74,14 @@ Build from the Chromium Android browser target and adapt the Android browser UI/
 
 Build Chromium native/content components and create a separate WAE Android shell using the available Content Java/JNI interfaces. This could allow more freedom for a Compose-first product UI, but the Content interfaces are not a stable, version-independent third-party embedding SDK. Every Chromium revision can require integration changes, and browser-level responsibilities (tabs, permissions, downloads, file chooser, process lifecycle, accessibility, security UI) remain WAE's responsibility.
 
+### WebLayer / WebEngine status
+
+Chromium's newer WebEngine work is also worth tracking, but it is not an automatic production choice. Upstream documents that the WebLayer API was deprecated as of M108 and is being merged into WebEngine. The current WebEngine README says the Android browser-process sandbox boundary does not yet exist; its limited/makeshift sandbox mode is described as testing-only. That is not sufficient evidence for WAE's production security requirements.
+
+Source: https://chromium.googlesource.com/chromium/src/+/f5be305cce08118a4983ac2fa7441ff30eca8aad/weblayer/README.md
+
+Treat WebEngine as a research candidate only. Reconsider it only after its public API, supported release status, Android 10 compatibility, renderer/browser process isolation, and production sandbox guarantees are verified at the exact pinned revision.
+
 ### Decision gate
 
 Do not choose based on a demo or API name alone. Create a small proof-of-concept on the pinned revision and compare:
