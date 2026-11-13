@@ -87,6 +87,11 @@ class BrowserSessionPolicyTest {
 
         assertFalse(controller.updatePendingInput(tab.id, "x".repeat(8_193)))
         assertFalse(controller.commitNavigation(tab.id, "https://example.com/" + "x".repeat(8_200)))
+        assertFalse(controller.commitNavigation(tab.id, "javascript:alert(1)"))
+        assertFalse(controller.commitNavigation(tab.id, "https://user:pass@example.com"))
+        assertFalse(controller.commitNavigation(tab.id, "https://example.com:0"))
+        assertTrue(controller.commitNavigation(tab.id, "https://example.com/path"))
+        assertEquals("https://example.com/path", controller.snapshot().activeTab?.currentUrl)
         assertEquals("", controller.snapshot().activeTab?.pendingInput)
         assertEquals(null, controller.snapshot().activeTab?.currentUrl)
     }
