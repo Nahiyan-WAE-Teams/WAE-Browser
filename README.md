@@ -15,7 +15,7 @@ WAE Browser is a privacy-focused Android browser project built around Chromium, 
 
 ## Current status
 
-The repository contains the product/security baseline, a Jetpack Compose browser workspace with standard/private tab creation, selection/closing and per-tab address drafts, an engine-independent browser session/address-resolution module with private-safe DataStore persistence and lifecycle-aware restoration/writes, a pinned Gradle 9.6.0 Wrapper, and the engine API contract module. The workspace is a UI foundation only: Chromium navigation and rendering, extension execution, privacy enforcement, downloads, and sync are not yet integrated. The engine API is a contract only; it has no concrete engine implementation. No release APK has been produced and the Android Gradle build has not yet been validated.
+The repository contains the product/security baseline, a Jetpack Compose browser workspace with standard/private tab creation, selection/closing and per-tab address drafts, an engine-independent browser session/address-resolution module with private-safe DataStore persistence and lifecycle-aware restoration/writes, a pinned Gradle 9.6.0 Wrapper, and the engine API contract module. The Compose workspace is a product/domain prototype, not the final Chromium runtime host. Chromium's complete Android browser application is the selected runtime; WAE UI must be adapted inside its Activity/tab/profile lifecycle. Chromium navigation and rendering, extension execution, privacy enforcement, downloads, and sync are not yet integrated. The engine API is a contract only; it has no concrete engine implementation. No release APK has been produced and the Android Gradle build has not yet been validated.
 
 Active implementation branch: [feat/android-foundation](https://github.com/Nahiyan-WAE-Teams/WAE-Browser/tree/feat/android-foundation).
 
@@ -26,6 +26,7 @@ Active implementation branch: [feat/android-foundation](https://github.com/Nahiy
 - [Module architecture](docs/ARCHITECTURE.md)
 - [Verified Android toolchain baseline](docs/TOOLCHAIN.md)
 - [Chromium integration investigation](docs/CHROMIUM_INTEGRATION.md)
+- [Pinned Chromium Android integration map](browser/integration/README.md)
 - [Chromium security maintenance](docs/CHROMIUM_MAINTENANCE.md)
 - [Implementation plan](PLAN.md)
 - [Implementation status and verification record](docs/IMPLEMENTATION_STATUS.md)
