@@ -58,21 +58,20 @@ out/WAE/bin/chrome_public_apk install
 5. Record the APK's version, package metadata, and SHA-256.
 6. Do not treat a successful ChromePublic build as proof that WAE's custom UI or engine adapter is implemented.
 
-## WAE package namespace configuration
+## WAE package namespace and app-name patch
 
-After the unmodified baseline is reviewed, generate a separate output directory using the WAE-specific args recorded in `browser/build/args/wae-arm64.gn`:
+After the unmodified baseline is reviewed, apply the first WAE patch to the clean pinned checkout, then generate a separate output directory:
 
 ```sh
+WAE_REPO=/path/to/WAE-Browser
+git -C "$HOME/wae-chromium/src" apply --check "$WAE_REPO/browser/patches/0001-wae-app-name.patch"
+git -C "$HOME/wae-chromium/src" apply "$WAE_REPO/browser/patches/0001-wae-app-name.patch"
+git -C "$HOME/wae-chromium/src" diff --check
+
 gn gen out/WAEBrand --args='target_os="android" target_cpu="arm64" chrome_public_manifest_package="com.wae.browser"'
 autoninja -C out/WAEBrand chrome_public_apk
 ```
 
-The GN arg `chrome_public_manifest_package` is declared by Chromium's `chrome/android/chrome_public_apk_tmpl.gni` and is consumed by the public browser target. It changes the Android application package namespace. The first reviewed source patch changes the manifest launcher label to WAE Browser:
+The GN arg `chrome_public_manifest_package` is declared by Chromium's `chrome/android/chrome_public_apk_tmpl.gni` and changes the Android application package namespace. Patch `0001` changes the manifest's `app_name` resource to WAE Browser. Neither change replaces Chromium launcher icons, remaining product strings, or Chrome's browser UI.
 
-```sh
-WAE_REPO=/path/to/WAE-Browser
-git -C "$HOME/wae-chromium/src" apply "$WAE_REPO/browser/patches/0001-wae-app-name.patch"
-git -C "$HOME/wae-chromium/src" diff --check
-```
-
-The patch is authored against the locked source file but has not yet been validated with `git apply --check` or a Chromium build. Launcher icons, remaining product strings, and Chrome's browser UI remain upstream defaults. Do not ship this package-namespace/app-name build as WAE Browser until the source overlay and runtime integration are reviewed. Do not add remote execution, production signing, or release GN flags until the baseline build is reviewed. No command in this guide has been run by this repository's current build environment.
+The patch is authored against the locked source file but has not yet been validated with `git apply --check` or a Chromium build. Do not ship this package-namespace/app-name build as WAE Browser until the source overlay and runtime integration are reviewed.
