@@ -1,6 +1,6 @@
 # Chromium POC build
 
-This guide builds the exact source revision in `../revisions/chromium.lock`. It does not produce a WAE-branded browser; it validates the upstream ARM64 Android build environment and pinned source.
+This guide builds the exact source revision in `../revisions/chromium.lock`. The first build is an unmodified Chromium baseline. A second configuration uses WAE's package namespace, but does not yet apply WAE app-label, icon, or browser-UI patches.
 
 ## Host requirements
 
@@ -36,7 +36,7 @@ gclient runhooks
 
 ## Generate and build ARM64
 
-The initial GN args are also recorded in `browser/build/args/arm64.gn` in the WAE repository. For the upstream checkout:
+The baseline GN args are recorded in `browser/build/args/arm64.gn` in the WAE repository. For the upstream checkout:
 
 ```sh
 gn gen out/WAE --args='target_os="android" target_cpu="arm64"'
@@ -58,4 +58,15 @@ out/WAE/bin/chrome_public_apk install
 5. Record the APK's version, package metadata, and SHA-256.
 6. Do not treat a successful ChromePublic build as proof that WAE's custom UI or engine adapter is implemented.
 
-Do not add remote execution, production signing, custom patches, or a release GN configuration until the baseline build is reviewed. No command in this guide has been run by this repository's current build environment.
+## WAE package namespace configuration
+
+After the unmodified baseline is reviewed, generate a separate output directory using the WAE-specific args recorded in `browser/build/args/wae-arm64.gn`:
+
+```sh
+gn gen out/WAEBrand --args='target_os="android" target_cpu="arm64" chrome_public_manifest_package="com.wae.browser"'
+autoninja -C out/WAEBrand chrome_public_apk
+```
+
+The GN arg `chrome_public_manifest_package` is declared by Chromium's `chrome/android/chrome_public_apk_tmpl.gni` and is consumed by the public browser target. This changes the Android application package namespace only. It does not change the launcher label, icons, product strings, or Chrome's browser UI. Those require a separate, reviewed Chromium patch set.
+
+Do not apply branding patches or ship this package-namespace build as WAE Browser until the source overlay and runtime integration are reviewed. Do not add remote execution, production signing, or release GN flags until the baseline build is reviewed. No command in this guide has been run by this repository's current build environment.
