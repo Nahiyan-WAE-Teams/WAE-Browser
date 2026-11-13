@@ -122,4 +122,57 @@ class BrowserSessionPolicyTest {
         }
         assertEquals(listOf(standard), PersistedBrowserSession(listOf(standard), "standard").tabs)
     }
+
+    @Test
+    fun restoreRejectsInvalidInputWithoutDestroyingCurrentSession() {
+        val controller = BrowserSessionController(newId = { "existing" })
+        val existing = controller.createTab()
+        val standard = BrowserTab(
+            id = "restored",
+            mode = BrowsingMode.STANDARD,
+            title = "Restored",
+            currentUrl = "https://example.com",
+            pendingInput = "https://example.com",
+            createdAtEpochMillis = 2L
+        )
+        val privateTab = standard.copy(id = "private", mode = BrowsingMode.PRIVATE)
+
+        assertThrows(IllegalArgumentException::class.java) {
+            controller.restoreStandardTabs(listOf(privateTab))
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            controller.restoreStandardTabs(listOf(standard, standard.copy(title = "Duplicate")))
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            controller.restoreStandardTabs(listOf(standard), "unknown")
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            controller.restoreStandardTabs((0..50).map { standard.copy(id = "tab-$it") })
+        }
+        assertEquals(listOf(existing), controller.snapshot().tabs)
+        assertEquals(existing.id, controller.snapshot().activeTabId)
+    }
+
+    @Test
+    fun restoreUsesPreferredStandardTabAndClearsTransientLoadingState() {
+        val controller = BrowserSessionController()
+        val first = BrowserTab(
+            id = "first",
+            mode = BrowsingMode.STANDARD,
+            title = "First",
+            currentUrl = "https://one.example",
+            pendingInput = "draft-not-restored",
+            isLoading = true,
+            progress = 73,
+            createdAtEpochMillis = 1L
+        )
+        val second = first.copy(id = "second", title = "Second", currentUrl = "https://two.example")
+
+        controller.restoreStandardTabs(listOf(first, second), "second")
+
+        val restored = controller.snapshot()
+        assertEquals("second", restored.activeTabId)
+        assertEquals(listOf("first", "second"), restored.tabs.map { it.id })
+        assertTrue(restored.tabs.none { it.isLoading || it.progress != 0 })
+    }
 }
