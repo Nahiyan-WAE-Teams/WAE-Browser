@@ -8,7 +8,7 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 - [x] Set Android 10 (API 29) as the minimum supported OS.
 - [ ] Select the application license after reviewing Chromium and third-party obligations.
 - [ ] Define minimum device requirements beyond OS version (RAM, storage, CPU/ABI).
-- [ ] Verify current stable Android Gradle Plugin, Kotlin, Gradle, NDK, and Chromium revisions from primary sources.
+- [x] Verify current stable Android Gradle Plugin, Kotlin, Gradle, and Compose versions from primary sources; record them in docs/TOOLCHAIN.md.\n- [ ] Verify and pin the NDK and exact Chromium revision from primary sources.
 - [ ] Validate that the selected Chromium revision supports the Android 10 (API 29) floor.
 - [ ] Establish reproducible build inputs, dependency pinning, and an SBOM strategy.
 - [ ] Define signing-key custody and release provenance.
@@ -17,7 +17,7 @@ This plan is the working sequence. Each phase must have explicit acceptance crit
 
 ## Phase 1 — Android shell and product UI
 
-- [ ] Create the Android application module and baseline build.
+- [x] Create the initial Android application module and Compose baseline (Gradle build still pending).
 - [ ] Implement browser shell, tab model, address/search bar, navigation controls, and settings.
 - [ ] Establish design tokens, typography, accessibility, responsive layouts, and restrained motion.
 - [ ] Respect system animation settings and provide an in-app motion preference.
