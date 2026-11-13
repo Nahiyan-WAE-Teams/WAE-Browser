@@ -4,7 +4,7 @@
 **Version:** 157.0.8103.78  
 **Status:** Source-level map only; no Chromium build or runtime proof-of-concept has been run.
 
-This document defines the intended ownership boundary for the selected browser-fork approach. It is not a claim that a WAE adapter already exists.
+This document defines the intended ownership boundary for the selected browser-fork approach. It is not a claim that a WAE adapter already exists. See [UI adaptation boundaries](UI_ADAPTATION.md) for the root Activity, toolbar, and tab-switcher integration rules.
 
 ## Runtime host and application identity
 
