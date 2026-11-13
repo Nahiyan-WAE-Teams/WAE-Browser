@@ -38,13 +38,13 @@ AGP 9.0+ enables built-in Kotlin by default. Do not also apply `org.jetbrains.ko
 
 ## Wrapper security
 
-The repository includes the official Gradle 9.6.0 Wrapper scripts and Wrapper JAR from the Gradle `v9.6.0` source tag. The Wrapper distribution URL is pinned to the official Gradle HTTPS host, and `distributionSha256Sum` is set to the independently published checksum. Treat changes to Wrapper scripts or JAR as security-sensitive and compare the JAR against Gradle's published checksum before execution.
+The repository includes the official Gradle 9.6.0 Wrapper scripts and Wrapper JAR from the Gradle `v9.6.0` source tag. The Wrapper JAR SHA-256 was computed from the fetched binary and matches Gradle's published `497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7` value. The Wrapper distribution URL is pinned to the official Gradle HTTPS host, and `distributionSha256Sum` is set to the independently published distribution checksum. Treat changes to Wrapper scripts or JAR as security-sensitive.
 
 ## Chromium toolchain constraints
 
-Chromium is built separately from the Android Gradle project. Its current Android build instructions require a 64-bit Linux host, Git and Python, at least 100 GB free disk space (more than 16 GB RAM recommended), and the `depot_tools` checkout/hooks. ARM64 is selected with GN arguments `target_os = "android"` and `target_cpu = "arm64"`. The exact Chromium revision, NDK/SDK versions, and GN configuration must be taken from the pinned Chromium checkout before integration; do not guess them from the app's AGP configuration.
+Chromium is built separately from the Android Gradle project. The pinned revision's Android build instructions require a 64-bit Linux host, at least 8 GB RAM (more than 16 GB recommended), at least 100 GB free disk space, Git and Python, and `depot_tools` plus Chromium hooks. The POC pin in `browser/revisions/chromium.lock` specifies NDK 30.0.16248370, Android SDK platform 37.2, Build Tools 37.0.0, and ARM64 GN arguments `target_os = "android"` and `target_cpu = "arm64"`. These are Chromium's own pinned build inputs and are separate from the Android app shell's AGP SDK configuration.
 
-The Chromium source documentation identifies `chrome_public_apk` as a complete Chrome Android APK target and documents API 29 support for the ChromePublic bundle. It is not a standalone embeddable AAR. WAE Browser must not treat that APK as a drop-in engine library.
+The pinned Chromium source identifies `chrome_public_apk` as a complete browser APK target and sets the default Android minimum SDK to API 29. It is not a standalone embeddable AAR. WAE Browser must not treat that APK as a drop-in engine library.
 
 ## Build environment and validation status
 
