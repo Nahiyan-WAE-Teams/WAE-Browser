@@ -64,13 +64,13 @@ Do not:
 - Claim that desktop Chrome extension APIs are available just because the project builds Chromium.
 - Disable sandboxing, site isolation, certificate checks, or renderer process protections to simplify integration.
 
-## 5. Integration paths to evaluate
+## 5. Selected integration direction
 
-### Path A — WAE-branded Chromium Android browser fork
+### Selected — Adapt Chromium's Android browser application
 
-Build from the Chromium Android browser target and adapt the Android browser UI/application layer to WAE product requirements. This keeps browser lifecycle, tabs, permissions, downloads, and engine internals close to the upstream implementation, but requires maintaining a reviewed Chromium patch set and rebasing it on every security update.
+Build from Chromium's `chrome_public_apk` target and adapt its Android browser application layer to WAE product requirements. The pinned revision declares `org.chromium.chrome.browser.ChromeTabbedActivity` in `chrome/android/java/AndroidManifest.xml`; this Activity and Chromium's browser lifecycle remain the runtime entry point. The `chrome_public_manifest_package` GN arg allows a separate WAE package namespace (`com.wae.browser`) without pretending the Chrome APK is an embeddable library. The Compose app module remains a design/domain prototype and will not be placed around Chromium as a WebView-like wrapper. WAE's product UI must be implemented at a reviewed seam inside the Chromium Android browser application. This keeps browser lifecycle, tabs, permissions, downloads, and engine internals close to upstream, but requires maintaining and rebasing a reviewed Chromium patch set for every security update.
 
-### Path B — Custom WAE Android shell over Chromium Content
+### Alternative not selected — Custom WAE Android shell over Chromium Content
 
 Build Chromium native/content components and create a separate WAE Android shell using the available Content Java/JNI interfaces. This could allow more freedom for a Compose-first product UI, but the Content interfaces are not a stable, version-independent third-party embedding SDK. Every Chromium revision can require integration changes, and browser-level responsibilities (tabs, permissions, downloads, file chooser, process lifecycle, accessibility, security UI) remain WAE's responsibility.
 
@@ -91,13 +91,14 @@ Do not choose based on a demo or API name alone. Create a small proof-of-concept
 4. Can it build reproducibly for ARM64 and install on Android 10?
 5. Can the integration be updated on the two-week Chromium release cadence without unreviewable patch drift?
 
-The first POC should compare both integration paths. A full Chrome APK is a useful upstream build validation, not by itself a WAE Browser release.
+The first POC is now staged: first build the unmodified pinned ARM64 `chrome_public_apk`, then build a separate package-namespace variant with `chrome_public_manifest_package="com.wae.browser"`. Only after those are reproducible should the first UI/branding patch be authored. A full Chrome APK or package-renamed APK is not by itself a WAE Browser release.
 
 ## 6. Immediate implementation sequence
 
 1. Build the unmodified pinned Chromium ARM64 Android browser target on a suitable Linux host.
-2. Prototype the narrowest WAE integration on top of that exact source revision.
-3. Review the resulting architecture and patch set before moving the app shell or UI into the selected engine integration.
-4. Record the exact source SHA, build arguments, patch hashes, third-party notices, and update/rebase procedure.
+2. Build the separate `com.wae.browser` package-namespace variant using `browser/build/args/wae-arm64.gn`.
+3. Map the Chromium Activity, tab model, profile, permission, download, and renderer lifecycle seams at the exact source revision.
+4. Implement WAE browser controls and product UI as a small, reviewed patch series inside Chromium's Android application; do not attempt to embed the full browser in the standalone Compose Activity.
+5. Record the exact source SHA, build arguments, patch hashes, third-party notices, and update/rebase procedure.
 
 No Chromium source has been vendored or built in this repository yet.
