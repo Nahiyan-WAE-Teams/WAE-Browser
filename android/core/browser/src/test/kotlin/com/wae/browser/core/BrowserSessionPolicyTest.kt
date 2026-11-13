@@ -2,8 +2,8 @@ package com.wae.browser.core
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Assert.assertThrows
 import org.junit.Test
 
@@ -180,6 +180,7 @@ class BrowserSessionPolicyTest {
         assertEquals("https://one.example", restored.tabs[0].pendingInput)
         assertEquals("https://two.example", restored.tabs[1].pendingInput)
     }
+
     @Test
     fun persistedProjectionRemovesUnsentAddressDrafts() {
         val controller = BrowserSessionController(newId = { "draft-tab" })
@@ -246,5 +247,4 @@ class BrowserSessionPolicyTest {
             ) is NavigationDecision.Load
         )
     }
-
 }
