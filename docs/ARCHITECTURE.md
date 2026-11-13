@@ -68,7 +68,8 @@ WAE-Browser/
 
 | Module | Responsibility | Must not own |
 |---|---|---|
-| app | Dependency graph, lifecycle, top-level navigation | Browser policy implementation |\n| core/browser | Browser tab/session domain state and address resolution | Android UI and Chromium internals |
+| app | Dependency graph, lifecycle, top-level navigation | Browser policy implementation |
+| core/browser | Browser tab/session domain state and address resolution | Android UI and Chromium internals |
 | core/model | Stable domain types | Android UI |
 | core/database | Local records and migrations | Sync transport |
 | core/datastore | Preferences | Secret cryptographic protocol |
