@@ -18,4 +18,5 @@ android {
 
 dependencies {
     implementation("androidx.datastore:datastore-preferences:1.3.0")
+    testImplementation("junit:junit:4.13.2")
 }
