@@ -1,7 +1,7 @@
 diff --git a/chrome/android/java/res_chromium_base/values/channel_constants.xml b/chrome/android/java/res_chromium_base/values/channel_constants.xml
 --- a/chrome/android/java/res_chromium_base/values/channel_constants.xml
 +++ b/chrome/android/java/res_chromium_base/values/channel_constants.xml
-@@ -8,7 +8,7 @@
+@@ -7,6 +7,6 @@
  <resources xmlns:android="http://schemas.android.com/apk/res/android">
      <!-- The application name displayed to the user. -->
 -    <string name="app_name" translatable="false">Chromium</string>
