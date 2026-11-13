@@ -1,0 +1,17 @@
+# WAE Browser Chromium source baseline
+# Candidate pinned for the first integration proof-of-concept; not yet built or release-approved.
+repository=https://chromium.googlesource.com/chromium/src.git
+revision=81ff2496eed313447d34079a6f45c57f9c5611c1
+version=157.0.8103.78
+branch=refs/branch-heads/8103
+cr_commit_position=refs/branch-heads/8103@{#1503}
+selected_date=2026-11-13
+minimum_android_api=29
+default_target_sdk=36
+android_sdk_platform=37.2
+android_sdk_build_tools=37.0.0
+android_ndk=30.0.16248370
+target_os=android
+target_cpu=arm64
+build_target=chrome_public_apk
+status=POC_CANDIDATE_NOT_BUILT
