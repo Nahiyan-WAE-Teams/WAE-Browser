@@ -19,7 +19,7 @@ owned by Chromium and is intentionally unchanged.
 diff --git a/chrome/android/java/res/values/styles.xml b/chrome/android/java/res/values/styles.xml
 --- a/chrome/android/java/res/values/styles.xml
 +++ b/chrome/android/java/res/values/styles.xml
-@@ -67,7 +67,15 @@
+@@ -67,7 +67,13 @@
      <style name="Base.Theme.Chromium.TabbedMode" parent="Theme.Chromium.WithWindowAnimation">
          <item name="android:statusBarColor">@macro/default_bg_color</item>
          <item name="android:windowLightStatusBar">@bool/window_light_status_bar</item>
